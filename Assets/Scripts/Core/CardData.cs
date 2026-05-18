@@ -159,7 +159,9 @@ namespace HanoiGame
             public EffectType type;
             public int v1, v2;
             public float vf;
+            public Element element;
             public string descTemplate; // {0}=v1, {1}=v2, {2}=vf*100
+            public string tooltip;
 
             public string Format(int lv)
             {
@@ -167,96 +169,74 @@ namespace HanoiGame
             }
         }
 
-        public static readonly Dictionary<int, List<EffectDef>> Pool = new Dictionary<int, List<EffectDef>>
+        // shorthand
+        static EffectDef E(EffectType t, int v1, int v2, float vf, Element e, string desc, string tip) =>
+            new() { type=t, v1=v1, v2=v2, vf=vf, element=e, descTemplate=desc, tooltip=tip };
+
+        public static readonly Dictionary<int, List<EffectDef>> Pool = new()
         {
-            [3] = new List<EffectDef>
-            {
-                new EffectDef { type = EffectType.PureDamage,       v1 = 5,  v2 = 0,  vf = 0,    descTemplate = "安柏·爆弹 — 造成{0}点伤害" },
-                new EffectDef { type = EffectType.DamageDraw,       v1 = 4,  v2 = 1,  vf = 0,    descTemplate = "砂糖·转化 — {0}伤害，抽{1}牌" },
-                new EffectDef { type = EffectType.PureShield,       v1 = 6,  v2 = 0,  vf = 0,    descTemplate = "诺艾尔·护心铠 — {0}护盾" },
-                new EffectDef { type = EffectType.ShieldReflect,    v1 = 4,  v2 = 0,  vf = 0.2f, descTemplate = "北斗·捉浪 — {0}护盾，反弹{2}%" },
-                new EffectDef { type = EffectType.PureHeal,         v1 = 8,  v2 = 0,  vf = 0,    descTemplate = "芭芭拉·歌声 — 恢复{0}生命" },
-                new EffectDef { type = EffectType.HealCleanse,      v1 = 5,  v2 = 0,  vf = 0,    descTemplate = "班尼特·鼓舞 — 恢复{0}，清除元素" },
-                new EffectDef { type = EffectType.StepRecovery,     v1 = 3,  v2 = 0,  vf = 0,    descTemplate = "枫原万叶·风引 — +{0}步" },
-                new EffectDef { type = EffectType.ComboChain,       v1 = 3,  v2 = 0,  vf = 0.15f,descTemplate = "行秋·裁雨 — {0}伤害，连携+{2}%" },
+            [3] = new() {
+                E(EffectType.PureDamage,   5, 0, 0,    Element.Pyro,    "安柏·爆弹 — {0}伤害",         "造成{0}点火焰伤害"),
+                E(EffectType.DamageDraw,   4, 1, 0,    Element.Anemo,   "砂糖·转化 — {0}伤害，抽{1}牌",  "造成伤害并抽取卡牌"),
+                E(EffectType.PureShield,   6, 0, 0,    Element.Geo,     "诺艾尔·护心铠 — {0}护盾",       "获得护盾吸收伤害"),
+                E(EffectType.ShieldReflect,5, 0, 0.2f, Element.Electro, "北斗·捉浪 — {0}护盾，反弹{2}%", "护盾+反弹部分伤害"),
+                E(EffectType.PureHeal,     8, 0, 0,    Element.Hydro,   "芭芭拉·歌声 — 恢复{0}生命",     "恢复生命值"),
+                E(EffectType.HealCleanse,  5, 0, 0,    Element.Pyro,    "班尼特·鼓舞 — 恢复{0}，清除中毒", "治疗并清除所有负面状态"),
+                E(EffectType.StepRecovery, 8, 0, 0,    Element.Anemo,   "枫原万叶·风引 — +{0}步",         "恢复步数"),
+                E(EffectType.ComboChain,   3, 0, 0.2f, Element.Hydro,   "行秋·裁雨 — {0}伤害，连携+{2}%","伤害并提升下张牌伤害倍率"),
             },
-            [4] = new List<EffectDef>
-            {
-                new EffectDef { type = EffectType.MidDamage,         v1 = 9,  v2 = 0,  vf = 0,    descTemplate = "菲谢尔·夜巡 — 造成{0}点伤害" },
-                new EffectDef { type = EffectType.MidDamageDraw,     v1 = 7,  v2 = 1,  vf = 0,    descTemplate = "柯莱·飞叶 — {0}伤害，抽{1}牌" },
-                new EffectDef { type = EffectType.MidDamageWeaken,   v1 = 6,  v2 = 0,  vf = 0.3f, descTemplate = "丽莎·蔷薇 — {0}伤害，削弱{2}%" },
-                new EffectDef { type = EffectType.MidShield,         v1 = 12, v2 = 0,  vf = 0,    descTemplate = "迪奥娜·猫爪 — {0}护盾" },
-                new EffectDef { type = EffectType.MidShieldPermATK,  v1 = 8,  v2 = 1,  vf = 0,    descTemplate = "辛焱·摇滚 — {0}护盾，永久+{1}攻" },
-                new EffectDef { type = EffectType.MidHeal,           v1 = 12, v2 = 0,  vf = 0,    descTemplate = "七七·仙法 — 恢复{0}生命" },
-                new EffectDef { type = EffectType.MidHealBoost,      v1 = 8,  v2 = 0,  vf = 0.2f, descTemplate = "琴·蒲公英 — 恢复{0}，下回+{2}%" },
-                new EffectDef { type = EffectType.MidStepRecovery,   v1 = 5,  v2 = 0,  vf = 0,    descTemplate = "早柚·疾风 — +{0}步" },
-                new EffectDef { type = EffectType.MidComboChain,     v1 = 7,  v2 = 0,  vf = 0.25f,descTemplate = "重云·灵刃 — {0}伤害，连携+{2}%" },
+            [4] = new() {
+                E(EffectType.MidDamage,       9, 0, 0,    Element.Electro, "菲谢尔·夜巡 — {0}伤害",         "造成雷电伤害"),
+                E(EffectType.MidDamageDraw,   7, 1, 0,    Element.Dendro,  "柯莱·飞叶 — {0}伤害，抽{1}牌",  "伤害并抽牌"),
+                E(EffectType.MidDamageWeaken, 6, 0, 0.3f, Element.Electro,"丽莎·蔷薇 — {0}伤害，虚弱{2}%","伤害并降低敌人攻击力"),
+                E(EffectType.MidShield,      12, 0, 0,   Element.Cryo,   "迪奥娜·猫爪 — {0}护盾",          "获得冰元素护盾"),
+                E(EffectType.MidShieldPermATK,8, 2, 0,   Element.Pyro,    "辛焱·摇滚 — {0}护盾，永久+{1}攻","护盾并永久提升攻击力"),
+                E(EffectType.MidHeal,        12, 0, 0,   Element.Cryo,    "七七·仙法 — 恢复{0}生命",        "恢复生命值"),
+                E(EffectType.MidHealBoost,    8, 0, 0.25f,Element.Anemo,  "琴·蒲公英 — 恢复{0}，下回+{2}%","治疗并提升下回合伤害"),
+                E(EffectType.MidStepRecovery,12, 0, 0,   Element.Anemo,   "早柚·疾风 — +{0}步",             "恢复大量步数"),
+                E(EffectType.MidComboChain,   7, 0, 0.3f,Element.Cryo,   "重云·灵刃 — {0}伤害，连携+{2}%","伤害并提升下张牌伤害"),
             },
-            [5] = new List<EffectDef>
-            {
-                new EffectDef { type = EffectType.DamagePoison,      v1 = 15, v2 = 3,  vf = 3f,  descTemplate = "胡桃·蝶引 — {0}伤害，灼烧3回" },
-                new EffectDef { type = EffectType.DamageExecute,     v1 = 12, v2 = 0,  vf = 0,    descTemplate = "罗莎莉亚·处刑 — {0}伤害，半血翻倍" },
-                new EffectDef { type = EffectType.DamageLifesteal,   v1 = 10, v2 = 0,  vf = 0.4f, descTemplate = "神里绫华·冰华 — {0}伤害，吸血{2}%" },
-                new EffectDef { type = EffectType.ShieldBonusSteps,  v1 = 10, v2 = 5,  vf = 0,    descTemplate = "钟离·玉璋 — {0}护盾，+{1}步" },
-                new EffectDef { type = EffectType.HeavyShield,       v1 = 15, v2 = 0,  vf = 0,    descTemplate = "莱依拉·星盾 — {0}护盾" },
-                new EffectDef { type = EffectType.DamageShield,      v1 = 8,  v2 = 8,  vf = 0,    descTemplate = "凝光·璇玑 — {0}伤害，{1}护盾" },
-                new EffectDef { type = EffectType.HeavyHeal,         v1 = 18, v2 = 0,  vf = 0,    descTemplate = "珊瑚宫心海·水母 — 恢复{0}" },
-                new EffectDef { type = EffectType.HeavyComboChain,   v1 = 12, v2 = 0,  vf = 0.35f,descTemplate = "香菱·锅巴 — {0}伤害，连携+{2}%" },
+            [5] = new() {
+                E(EffectType.DamagePoison,    15, 3, 3f,  Element.Pyro,    "胡桃·蝶引 — {0}伤害，灼烧{1}回","伤害并附加灼烧(每回3伤害)"),
+                E(EffectType.DamageExecute,   12, 0, 0,   Element.Cryo,    "罗莎莉亚·处刑 — {0}伤害，半血×2","敌人半血以下伤害翻倍"),
+                E(EffectType.DamageLifesteal, 10, 0, 0.4f,Element.Cryo,   "神里绫华·冰华 — {0}伤害，吸血{2}%","造成伤害并恢复生命"),
+                E(EffectType.ShieldBonusSteps,10, 8, 0,  Element.Geo,     "钟离·玉璋 — {0}护盾，+{1}步",     "护盾并恢复步数"),
+                E(EffectType.HeavyShield,    15, 0, 0,   Element.Cryo,    "莱依拉·星盾 — {0}护盾",          "获得厚实的冰盾"),
+                E(EffectType.DamageShield,    8, 8, 0,   Element.Geo,     "凝光·璇玑 — {0}伤害+{1}护盾",    "伤害同时获得护盾"),
+                E(EffectType.HeavyHeal,      18, 0, 0,   Element.Hydro,   "珊瑚宫心海·水母 — 恢复{0}生命",  "恢复大量生命"),
+                E(EffectType.HeavyComboChain, 12, 0, 0.4f,Element.Pyro,   "香菱·锅巴 — {0}伤害，连携+{2}%","伤害并大幅提升下张牌"),
             },
-            [6] = new List<EffectDef>
-            {
-                new EffectDef { type = EffectType.DamagePierce,      v1 = 25, v2 = 0,  vf = 0,    descTemplate = "达达利亚·断流 — {0}伤害，无视护盾" },
-                new EffectDef { type = EffectType.DamageStun,        v1 = 20, v2 = 1,  vf = 0,    descTemplate = "莫娜·星命 — {0}伤害，禁锢{1}回" },
-                new EffectDef { type = EffectType.HeavyDamage,       v1 = 28, v2 = 0,  vf = 0,    descTemplate = "刻晴·星斗 — {0}伤害" },
-                new EffectDef { type = EffectType.ShieldPermATKLarge,v1 = 18, v2 = 1,  vf = 0,    descTemplate = "荒泷一斗·鬼铠 — {0}护盾，+{1}攻" },
-                new EffectDef { type = EffectType.HealDamageBoost,   v1 = 20, v2 = 0,  vf = 0.5f, descTemplate = "白术·长生 — 恢复{0}，下回+{2}%" },
-                new EffectDef { type = EffectType.MassiveHeal,       v1 = 25, v2 = 0,  vf = 0,    descTemplate = "瑶瑶·月桂 — 恢复{0}生命" },
-                new EffectDef { type = EffectType.RefreshMultiplier, v1 = 1,  v2 = 0,  vf = 0.03f,descTemplate = "鹿野院平藏·心算 — 刷新+{1}，倍率+{2}%" },
-                new EffectDef { type = EffectType.DamagePerStep,     v1 = 2,  v2 = 0,  vf = 0,    descTemplate = "赛诺·审判 — 步数×{0}伤害" },
-                new EffectDef { type = EffectType.ShieldBurst,       v1 = 0,  v2 = 0,  vf = 1.5f, descTemplate = "坎蒂丝·守护 — 护盾爆破{2}%" },
+            [6] = new() {
+                E(EffectType.DamagePierce,    25, 0, 0,   Element.Hydro,   "达达利亚·断流 — {0}伤害无视护盾","无视敌人护盾直接造成伤害"),
+                E(EffectType.DamageStun,      20, 1, 0,   Element.Hydro,   "莫娜·星命 — {0}伤害，禁锢{1}回","伤害并使敌人跳过回合"),
+                E(EffectType.HeavyDamage,     28, 0, 0,   Element.Electro, "刻晴·星斗 — {0}伤害",            "造成大量雷电伤害"),
+                E(EffectType.ShieldPermATKLarge,18,2,0,   Element.Geo,     "荒泷一斗·鬼铠 — {0}护盾，+{1}攻","护盾并永久提升攻击力"),
+                E(EffectType.HealDamageBoost, 20, 0, 0.5f,Element.Dendro, "白术·长生 — 恢复{0}，下回+{2}%","治疗并大幅提升下回伤害"),
+                E(EffectType.MassiveHeal,     25, 0, 0,   Element.Dendro,  "瑶瑶·月桂 — 恢复{0}生命",        "恢复巨量生命"),
+                E(EffectType.RefreshMultiplier,10,0, 0.03f,Element.Anemo, "鹿野院平藏·心算 — +{0}步，倍率+{2}%","恢复步数并提升倍率"),
+                E(EffectType.DamagePerStep,    3, 0, 0,   Element.Electro, "赛诺·审判 — 每步{0}伤害",        "剩余步数×每步伤害值"),
+                E(EffectType.ShieldBurst,      0, 0, 1.5f,Element.Hydro,  "坎蒂丝·守护 — 护盾×{2}%伤害",    "当前护盾值转化为伤害"),
             },
-            [7] = new List<EffectDef>
-            {
-                new EffectDef { type = EffectType.DamagePermATK,      v1 = 50, v2 = 3,  vf = 0,    descTemplate = "雷电将军·无想一刀 — {0}伤害，+{1}攻" },
-                new EffectDef { type = EffectType.DamageLifestealStrong,v1=35, v2 = 0,  vf = 0.5f, descTemplate = "八重神子·狐灵 — {0}伤害，吸血{2}%" },
-                new EffectDef { type = EffectType.DamageStunStrong,   v1 = 40, v2 = 1,  vf = 0,    descTemplate = "甘雨·霜华 — {0}伤害，冰封{1}回" },
-                new EffectDef { type = EffectType.MassiveDamage,      v1 = 45, v2 = 0,  vf = 0,    descTemplate = "迪卢克·天焰 — {0}伤害" },
-                new EffectDef { type = EffectType.RefreshMultiplierStrong,v1=2,v2 = 0,vf = 0.05f,descTemplate = "纳西妲·慧眼 — 刷新+{0}，倍率+{2}%" },
-                new EffectDef { type = EffectType.ExtraTurn,          v1 = 30, v2 = 0,  vf = 0,    descTemplate = "神里绫人·镜花 — {0}伤害，额外回合" },
-                new EffectDef { type = EffectType.ShieldReflectStrong,v1 = 30, v2 = 0,  vf = 0.5f, descTemplate = "艾尔海森·镜闪 — {0}护盾，反弹{2}%" },
-                new EffectDef { type = EffectType.HealPermATK,        v1 = 35, v2 = 2,  vf = 0,    descTemplate = "夜兰·幽玄 — 恢复{0}生命，+{1}攻" },
-                new EffectDef { type = EffectType.Overkill,           v1 = 40, v2 = 3,  vf = 0,    descTemplate = "魈·靖妖 — {0}伤害，击杀+{1}攻" },
-                new EffectDef { type = EffectType.LuckyHit,           v1 = 30, v2 = 0,  vf = 0.4f, descTemplate = "可莉·轰轰火花 — {0}伤害，{2}%三倍" },
+            [7] = new() {
+                E(EffectType.DamagePermATK,    50, 3, 0,   Element.Electro, "雷电将军·无想一刀 — {0}伤害+{1}攻","巨额伤害并永久提升攻击力"),
+                E(EffectType.DamageLifestealStrong,35,0,0.5f,Element.Electro,"八重神子·狐灵 — {0}伤害，吸血{2}%","伤害并大量吸血"),
+                E(EffectType.DamageStunStrong, 40, 1, 0,  Element.Cryo,    "甘雨·霜华 — {0}伤害，冰封{1}回","巨额冰伤并冻结敌人"),
+                E(EffectType.MassiveDamage,    45, 0, 0,   Element.Pyro,    "迪卢克·天焰 — {0}伤害",          "造成巨额火焰伤害"),
+                E(EffectType.RefreshMultiplierStrong,20,0,0.05f,Element.Dendro,"纳西妲·慧眼 — +{0}步，倍率+{2}%","恢复大量步数并提升倍率"),
+                E(EffectType.ExtraTurn,        30, 0, 0,   Element.Hydro,   "神里绫人·镜花 — {0}伤害，额外回","伤害并获得额外回合"),
+                E(EffectType.ShieldReflectStrong,30,0,0.5f,Element.Dendro, "艾尔海森·镜闪 — {0}护盾，反弹{2}%","厚盾并大幅反弹伤害"),
+                E(EffectType.HealPermATK,      35, 2, 0,   Element.Hydro,   "夜兰·幽玄 — 恢复{0}生命，+{1}攻","治疗并永久提升攻击力"),
+                E(EffectType.Overkill,         40, 3, 0,   Element.Anemo,   "魈·靖妖 — {0}伤害，击杀+{1}攻","伤害，击杀敌人永久加攻"),
+                E(EffectType.LuckyHit,         30, 0, 0.4f,Element.Pyro,   "可莉·轰轰火花 — {0}伤害，{2}%×3","概率触发三倍伤害"),
             },
-            [8] = new List<EffectDef>
-            {
-                new EffectDef { type = EffectType.TaskStepMultiplier, v1 = 0,  v2 = 0,  vf = 0.1f, descTemplate = "天理·维系者 — 步数倍率×1.1(累乘)" },
+            [8] = new() {
+                E(EffectType.TaskStepMultiplier,0,0,0.02f,Element.Omni,"天理·维系者 — 全卡牌预完成","所有手牌变为只差1步完成"),
             },
         };
 
         /// <summary>
         /// Generate a random CardData for the given tower level.
         /// </summary>
-        static Element RollElement(EffectType t) => t switch
-        {
-            EffectType.PureDamage or EffectType.MidDamage or EffectType.DamagePoison or EffectType.HeavyDamage
-                => (Element)UnityEngine.Random.Range(0, 3), // Pyro/Cryo/Hydro
-            EffectType.DamageDraw or EffectType.MidDamageDraw => Element.Anemo,
-            EffectType.PureShield or EffectType.MidShield or EffectType.HeavyShield or EffectType.ShieldBurst => Element.Geo,
-            EffectType.ShieldReflect or EffectType.ShieldReflectStrong => Element.Electro,
-            EffectType.PureHeal or EffectType.MidHeal or EffectType.HeavyHeal or EffectType.MassiveHeal or EffectType.HealCleanse => Element.Hydro,
-            EffectType.StepRecovery or EffectType.MidStepRecovery => Element.Anemo,
-            EffectType.ComboChain or EffectType.MidComboChain or EffectType.HeavyComboChain => Element.Cryo,
-            EffectType.DamagePierce or EffectType.DamageStun or EffectType.DamageStunStrong => Element.Electro,
-            EffectType.HealDamageBoost or EffectType.HealPermATK => Element.Pyro,
-            EffectType.DamageExecute or EffectType.DamageLifesteal or EffectType.DamageLifestealStrong => Element.Dendro,
-            EffectType.DamagePermATK or EffectType.ShieldPermATKLarge => Element.Geo,
-            EffectType.ExtraTurn or EffectType.RefreshMultiplier or EffectType.RefreshMultiplierStrong => Element.Omni,
-            EffectType.Overkill or EffectType.MassiveDamage => Element.Pyro,
-            EffectType.LuckyHit or EffectType.DamagePerStep => Element.Electro,
-            _ => (Element)UnityEngine.Random.Range(0, 7),
-        };
-
         public static CardData GenerateRandomCard(int level)
         {
             if (!Pool.ContainsKey(level) || Pool[level].Count == 0) return null;
@@ -269,7 +249,7 @@ namespace HanoiGame
                 effectValue2 = def.v2,
                 effectValueF = def.vf,
                 isTaskCard = (level == 8),
-                element = RollElement(def.type),
+                element = def.element,
                 effectDescription = def.Format(level)
             };
         }

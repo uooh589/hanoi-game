@@ -13,7 +13,8 @@ namespace HanoiGame
         public int playerMaxHP = 60;
         public int playerHP;
         public int playerShield;
-        public int baseATK = 8;
+        public int baseATK = 3;
+        public float damageBonus = 0f; // temporary one-turn damage bonus (additive with ATK)
 
         [Header("Turn State")]
         public CardData[] currentHand = new CardData[3];
@@ -421,13 +422,15 @@ namespace HanoiGame
         public float GetDamageMultiplier()
         {
             float mult = 1f;
+            // ATK scaling: first 5 atk = 100%, each extra atk = 50% effective (diminishing)
+            int totalATK = baseATK + GameManager.Instance.permanentATKBonus;
+            float atkMult = Mathf.Min(totalATK, 5f) + Mathf.Max(0f, totalATK - 5f) * 0.5f;
+            mult *= (1f + atkMult * 0.15f); // each effective ATK = +15% base damage
+
             if (playerWeakenTurns > 0) mult *= (1f - playerWeakenPercent);
             if (comboCharges > 0 && comboMultiplier > 1f) mult *= comboMultiplier;
-            if (nextTurnDamageBonus > 0)
-            {
-                mult *= (1f + nextTurnDamageBonus);
-                nextTurnDamageBonus = 0f;
-            }
+            if (damageBonus > 0) { mult *= (1f + damageBonus); damageBonus = 0f; }
+            if (nextTurnDamageBonus > 0) { mult *= (1f + nextTurnDamageBonus); nextTurnDamageBonus = 0f; }
             return mult;
         }
 

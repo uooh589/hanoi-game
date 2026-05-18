@@ -327,8 +327,21 @@ namespace HanoiGame
                 // ── Task card ──
                 case EffectType.TaskStepMultiplier:
                     {
-                        GameManager.Instance.stepMultiplier *= (1f + card.effectValueF);
-                        return $"步数倍率提升至×{GameManager.Instance.stepMultiplier:F2}！";
+                        int count = 0;
+                        for (int i = 0; i < 3; i++)
+                        {
+                            if (battle.handPuzzles[i] != null && !battle.handPuzzles[i].IsComplete())
+                            {
+                                battle.handPuzzles[i].SetOneMoveFromComplete();
+                                count++;
+                            }
+                        }
+                        if (battle.taskPuzzle != null)
+                        {
+                            battle.taskPuzzle.GenerateRandomState();
+                            battle.taskPuzzle.SaveToCardData(battle.taskCardInstance);
+                        }
+                        return $"预完成{count}张手牌（仅差1步）！";
                     }
 
                 default:
