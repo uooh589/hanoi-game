@@ -252,17 +252,13 @@ namespace HanoiGame
             piBg.raycastTarget = false;
 
             // Traveler avatar
-            // Avatar at left edge of PlayerInfo panel (panel 300x110, top-left pivot)
-            var pAvatar = new GameObject("PlayerAvatar", typeof(Image));
-            pAvatar.transform.SetParent(pi.transform, false);
-            var paImg = pAvatar.GetComponent<Image>();
-            paImg.color = Color.white; paImg.raycastTarget = true;
-            var paRt = pAvatar.GetComponent<RectTransform>();
-            paRt.anchorMin = paRt.anchorMax = new Vector2(0, 0.5f);
-            paRt.pivot = new Vector2(0, 0.5f);
-            paRt.sizeDelta = new Vector2(56, 56);
-            paRt.anchoredPosition = new Vector2(8, 0);
-            pAvatar.AddComponent<Button>();
+            // Avatar at left edge of PlayerInfo panel
+            var pAvatar = NewImage(pi.transform, "PlayerAvatar", Color.white, new Vector2(56, 56), Vector2.zero);
+            pAvatar.raycastTarget = true;
+            pAvatar.rectTransform.anchorMin = pAvatar.rectTransform.anchorMax = new Vector2(0, 0.5f);
+            pAvatar.rectTransform.pivot = new Vector2(0, 0.5f);
+            pAvatar.rectTransform.anchoredPosition = new Vector2(8, 0);
+            pAvatar.gameObject.AddComponent<Button>();
             pAvatar.type = Image.Type.Simple; pAvatar.preserveAspect = true; pAvatar.raycastTarget = true;
             pAvatar.gameObject.AddComponent<Button>();
 
@@ -342,7 +338,7 @@ namespace HanoiGame
 
             // Wire up BattleUI
             var battleUI = panel.AddComponent<BattleUI>();
-            battleUI.playerAvatar = pi.transform.Find("PlayerAvatar")?.GetComponent<Image>();
+            battleUI.playerAvatar = pAvatar;
             battleUI.turnAnnounceText = Txt("TurnAnnounceText", panel.transform, "", 28, new Vector2(0, 100), font, 400, 50);
             battleUI.turnAnnounceText.gameObject.SetActive(false);
             battleUI.playerHPText = GetTxt(pi.transform, "PlayerHPText");
