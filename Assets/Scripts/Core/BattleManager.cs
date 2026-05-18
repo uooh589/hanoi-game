@@ -72,6 +72,12 @@ namespace HanoiGame
 
         public bool isEliteBattle;
         public bool isBossBattle;
+        public bool fastMode;
+        public float fastModeSpeed => fastMode ? 0.1f : 1f;
+
+        // Undo support
+        public HanoiPuzzle lastPuzzleState;
+        public int lastHandIndex = -1;
 
         private List<string> _battleLog = new List<string>();
         private bool _playerTurn;
@@ -166,6 +172,36 @@ namespace HanoiGame
         {
             if (taskStepsRemaining <= 0 || taskPuzzle == null) return false;
             taskStepsRemaining--;
+            OnStateChanged?.Invoke();
+            return true;
+        }
+
+        /// <summary>Save current puzzle state for undo</summary>
+        public void SaveForUndo(int handIndex, HanoiPuzzle puzzle)
+        {
+            if (puzzle == null) return;
+            lastHandIndex = handIndex;
+            lastPuzzleState = new HanoiPuzzle(puzzle.diskCount);
+            lastPuzzleState.targetPeg = puzzle.targetPeg;
+            lastPuzzleState.peg0 = new List<int>(puzzle.peg0);
+            lastPuzzleState.peg1 = new List<int>(puzzle.peg1);
+            lastPuzzleState.peg2 = new List<int>(puzzle.peg2);
+        }
+
+        /// <summary>Undo last move, returns true if successful</summary>
+        public bool UndoMove()
+        {
+            if (lastPuzzleState == null || lastHandIndex < 0) return false;
+            if (stepsRemaining <= 0 && lastHandIndex != -1) return false; // need at least 1 step
+            stepsRemaining--;
+            var puzzle = handPuzzles[lastHandIndex];
+            if (puzzle == null) return false;
+            puzzle.peg0 = new List<int>(lastPuzzleState.peg0);
+            puzzle.peg1 = new List<int>(lastPuzzleState.peg1);
+            puzzle.peg2 = new List<int>(lastPuzzleState.peg2);
+            puzzle.targetPeg = lastPuzzleState.targetPeg;
+            lastPuzzleState = null;
+            lastHandIndex = -1;
             OnStateChanged?.Invoke();
             return true;
         }
@@ -362,11 +398,18 @@ namespace HanoiGame
             Invoke(nameof(StartPlayerTurn), 0.8f);
         }
 
-        public int DealDamageToEnemy(int rawDamage, bool pierce)
+        public int DealDamageToEnemy(int rawDamage, bool pierce, Element? attackElement = null)
         {
             if (enemy == null) return 0;
 
             int remaining = rawDamage;
+
+            // Elemental weakness: 2x damage if attack element matches enemy weakness
+            if (attackElement != null && enemy.weakness == attackElement)
+            {
+                remaining *= 2;
+                AddBattleLog($"元素克制！{attackElement}→{enemy.enemyName}，伤害×2！");
+            }
 
             if (!pierce && enemy.currentShield > 0)
             {

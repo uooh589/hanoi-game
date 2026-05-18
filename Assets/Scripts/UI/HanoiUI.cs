@@ -10,6 +10,7 @@ namespace HanoiGame
     {
         public int handIndex;
         public Font uiFont;
+        private Image[] _pegHighlights = new Image[3];
         public HanoiPuzzle Puzzle { get; private set; }
         public CardData CardData { get; private set; }
 
@@ -90,6 +91,11 @@ namespace HanoiGame
                 MakeRect($"Plat{p}", cx, _pegBot, _pw * 0.22f, 5f, new Color(0.55f, 0.5f, 0.45f));
                 // Peg
                 MakeRect($"Peg{p}", cx, _pegBot + _pegH * 0.5f, 7f, _pegH, new Color(0.55f, 0.5f, 0.45f));
+
+                // Drag highlight overlay per peg
+                var hl = MakeRect($"HL{p}", cx, _pegBot + _pegH * 0.5f, _pw * 0.22f, _pegH, Color.clear);
+                _pegHighlights[p] = hl.GetComponent<Image>();
+                _pegHighlights[p].raycastTarget = false;
             }
 
             // Target indicator (recreated each refresh)
@@ -211,12 +217,27 @@ namespace HanoiGame
             if (_draggedRt == null) return;
             Vector2 local;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(_panelRt, e.position, e.pressEventCamera, out local);
-            // local.y is relative to panel center; anchoredPosition.y is relative to panel bottom
             _draggedRt.anchoredPosition = new Vector2(local.x, local.y + _ph * 0.5f - _diskH * 0.5f);
+
+            // Highlight valid/invalid target pegs
+            int size = Puzzle.TopDisk(_dragFromPeg);
+            for (int p = 0; p < 3; p++)
+            {
+                if (_pegHighlights[p] != null)
+                {
+                    bool valid = p != _dragFromPeg && Puzzle.IsValidMove(_dragFromPeg, p);
+                    if (valid) _pegHighlights[p].color = new Color(0, 1, 0, 0.3f); // green glow
+                    else if (p != _dragFromPeg) _pegHighlights[p].color = new Color(1, 0, 0, 0.2f); // red dim
+                    else _pegHighlights[p].color = Color.clear;
+                }
+            }
         }
 
         public void OnEndDrag(PointerEventData e)
         {
+            // Clear highlights
+            for (int p = 0; p < 3; p++) if (_pegHighlights[p] != null) _pegHighlights[p].color = Color.clear;
+
             if (_draggedRt == null || _dragFromPeg < 0) { _dragFromPeg = -1; _draggedDisk = null; _draggedRt = null; return; }
 
             Vector2 local;
@@ -236,6 +257,8 @@ namespace HanoiGame
                 bool canMove = IsTask ? _battle.UseTaskStep() : (IsPreview || _battle.UseStep());
                 if (canMove)
                 {
+                    // Save for undo before making the move
+                    if (!IsPreview) _battle.SaveForUndo(IsTask ? -1 : handIndex, Puzzle);
                     SimpleAudio.Instance?.PlayMove();
                     int from = _dragFromPeg;
                     int diskSize = Puzzle.TopDisk(from);

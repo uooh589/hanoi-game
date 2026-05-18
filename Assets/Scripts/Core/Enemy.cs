@@ -9,7 +9,8 @@ namespace HanoiGame
         public int maxHP, baseAttack, currentHP, currentShield, level;
         public string intentText;
         public int poisonDamage, poisonTurns;
-        public Element? attachedElement; // current elemental status
+        public Element? attachedElement;
+        public Element? weakness;
         public bool firstAction = true;
 
         private EnemyDef _def;
@@ -36,6 +37,7 @@ namespace HanoiGame
                 poisonDamage = 0,
                 poisonTurns = 0,
                 attachedElement = def.nativeElement,
+                weakness = def.weakTo,
                 firstAction = true,
             };
         }

@@ -22,6 +22,7 @@ namespace HanoiGame
         private const float CLICK_FREQ = 520f;
 
         [Range(0f, 1f)] public float volume = 0.08f;
+        public void SetVolume(float v) { volume = v; }
 
         private void Awake()
         {

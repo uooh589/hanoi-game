@@ -23,6 +23,7 @@ namespace HanoiGame
         public List<EnemyPattern> firstTurnPattern; // optional: override first turn
         public bool isElite, isBoss;
         public Element? nativeElement;
+        public Element? weakTo; // takes 2x damage from this
     }
 
     /// <summary>
@@ -53,15 +54,15 @@ namespace HanoiGame
             Pools[0] = new List<EnemyDef>
             {
                 // Slimes — permanent elemental aura
-                new() { name = "火史莱姆", region = "蒙德", baseHP = 28, baseATK = 6, nativeElement = Element.Pyro,
+                new() { name = "火史莱姆", region = "蒙德", baseHP = 28, baseATK = 6, nativeElement = Element.Pyro, weakTo = Element.Hydro,
                     pattern = new() { A(EnemyAction.Attack, 6, "火焰撞击"), A(EnemyAction.Attack, 5, "元素喷射"), A(EnemyAction.Defend, 4, "元素凝聚") }},
-                new() { name = "冰史莱姆", region = "蒙德", baseHP = 30, baseATK = 5, nativeElement = Element.Cryo,
+                new() { name = "冰史莱姆", region = "蒙德", baseHP = 30, baseATK = 5, nativeElement = Element.Cryo, weakTo = Element.Pyro,
                     pattern = new() { A(EnemyAction.Attack, 5, "冰锥射击"), A(EnemyAction.Defend, 5, "冰甲凝成"), A(EnemyAction.Attack, 5, "冰锥射击") }},
-                new() { name = "水史莱姆", region = "蒙德", baseHP = 26, baseATK = 5, nativeElement = Element.Hydro,
+                new() { name = "水史莱姆", region = "蒙德", baseHP = 26, baseATK = 5, nativeElement = Element.Hydro, weakTo = Element.Electro,
                     pattern = new() { A(EnemyAction.Attack, 5, "水弹"), A(EnemyAction.HealSelf, 5, "水元素自愈"), A(EnemyAction.Attack, 5, "水弹") }},
-                new() { name = "雷史莱姆", region = "蒙德", baseHP = 24, baseATK = 7, nativeElement = Element.Electro,
+                new() { name = "雷史莱姆", region = "蒙德", baseHP = 24, baseATK = 7, nativeElement = Element.Electro, weakTo = Element.Cryo,
                     pattern = new() { A(EnemyAction.Attack, 7, "放电"), A(EnemyAction.Attack, 6, "电击"), A(EnemyAction.ReduceSteps, 2, "麻痹干扰") }},
-                new() { name = "岩史莱姆", region = "蒙德", baseHP = 34, baseATK = 5, nativeElement = Element.Geo,
+                new() { name = "岩史莱姆", region = "蒙德", baseHP = 34, baseATK = 5, nativeElement = Element.Geo, weakTo = Element.Geo,
                     pattern = new() { A(EnemyAction.Defend, 6, "岩甲"), A(EnemyAction.Attack, 5, "岩弹"), A(EnemyAction.Attack, 5, "岩弹") }},
 
                 // Hilichurls

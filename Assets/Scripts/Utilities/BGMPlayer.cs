@@ -94,6 +94,7 @@ namespace HanoiGame
             }
         }
 
+        public void SetVolume(float v) { if (_src != null) _src.volume = v; }
         public void Stop() { _src?.Stop(); }
     }
 }

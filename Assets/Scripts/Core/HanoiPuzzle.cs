@@ -95,17 +95,17 @@ namespace HanoiGame
             return GetPeg(targetPeg).Count == diskCount;
         }
 
-        /// <summary>Set puzzle to 1 move from completion: smallest disk on target, rest on source.</summary>
+        /// <summary>Set puzzle to 1 move from completion: smallest disk on source, rest on target.</summary>
         public void SetOneMoveFromComplete()
         {
             peg0.Clear(); peg1.Clear(); peg2.Clear();
             int srcPeg = 0;
             while (srcPeg == targetPeg) srcPeg = Random.Range(0, 3);
-            // All disks except smallest on source peg (largest first = ascending in list)
+            // All disks except smallest on target peg
             for (int i = diskCount; i > 1; i--)
-                GetPeg(srcPeg).Add(i);
-            // Smallest disk on target peg
-            GetPeg(targetPeg).Add(1);
+                GetPeg(targetPeg).Add(i);
+            // Smallest disk on source peg — only needs to move it to target
+            GetPeg(srcPeg).Add(1);
         }
 
         public static int GetOptimalSteps(int disks)
