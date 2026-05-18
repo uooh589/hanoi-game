@@ -420,17 +420,16 @@ namespace HanoiGame
             go.transform.SetParent(parent, false);
             go.GetComponent<RectTransform>().sizeDelta = new Vector2(w, h);
             go.GetComponent<RectTransform>().anchoredPosition = pos;
-            // Genshin-style button background
             var btnImg = go.GetComponent<Image>();
-            var btnSprite = LoadUISprite("ui_button");
-            if (btnSprite != null) { btnImg.sprite = btnSprite; btnImg.type = Image.Type.Sliced; }
-            else btnImg.color = new Color(0.55f, 0.35f, 0.12f);
+            var spr = LoadUISprite(w < 120 ? "btn_small" : "btn_normal");
+            if (spr != null) { btnImg.sprite = spr; btnImg.type = Image.Type.Sliced; btnImg.color = Color.white; }
+            else btnImg.color = new Color(0.4f, 0.28f, 0.1f, 0.95f);
 
             var txtGo = new GameObject("Text", typeof(Text));
             txtGo.transform.SetParent(go.transform, false);
             var t = txtGo.GetComponent<Text>();
-            t.text = label; t.fontSize = 16; t.alignment = TextAnchor.MiddleCenter;
-            t.color = new Color(1f, 0.9f, 0.7f); t.font = font; t.raycastTarget = false;
+            t.text = label; t.fontSize = 14; t.alignment = TextAnchor.MiddleCenter;
+            t.color = new Color(1f, 0.88f, 0.65f); t.font = font; t.raycastTarget = false;
             t.rectTransform.anchorMin = Vector2.zero; t.rectTransform.anchorMax = Vector2.one;
             t.rectTransform.offsetMin = t.rectTransform.offsetMax = Vector2.zero;
 

@@ -101,6 +101,9 @@ namespace HanoiGame
                     BGMPlayer.Instance?.PlayRegion(_battle.enemy.region);
             }
 
+            // Apply Genshin-style UI textures at runtime
+            ApplyUIStyles();
+
             // Task overlay button wiring
             // Wire player avatar to open stats panel
             if (playerAvatar != null)
@@ -218,6 +221,15 @@ namespace HanoiGame
                 {
                     hanoiUIs[i].Initialize(_battle.handPuzzles[i], _battle.currentHand[i], i, _battle);
                 }
+            }
+        }
+
+        void ApplyUIStyles()
+        {
+            if (playerAvatar != null)
+            {
+                var avTex = Resources.Load<Texture2D>("avatar_traveler");
+                if (avTex != null) { playerAvatar.sprite = Sprite.Create(avTex, new Rect(0,0,avTex.width,avTex.height), Vector2.one*0.5f); playerAvatar.color = Color.white; }
             }
         }
 
