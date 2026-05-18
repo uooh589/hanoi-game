@@ -345,17 +345,19 @@ namespace HanoiGame
             var eventUI = eventPanel?.GetComponent<EventUI>();
             if (eventUI != null)
             {
-                var choices = new (string, System.Action)[e.choices.Length];
-                for (int i = 0; i < e.choices.Length; i++)
+                var eventText = e.Item1;
+                var eventChoices = e.Item2;
+                var choices = new (string, System.Action)[eventChoices.Length];
+                for (int i = 0; i < eventChoices.Length; i++)
                 {
-                    var captured = e.choices[i].Item2;
-                    choices[i] = (e.choices[i].Item1, () => { captured(); SaveManager.Save(this); ShowMap(); });
+                    var captured = eventChoices[i].Item2;
+                    choices[i] = (eventChoices[i].Item1, () => { captured(); SaveManager.Save(this); ShowMap(); });
                 }
-                eventUI.Show(e.text, choices);
+                eventUI.Show(eventText, choices);
             }
             else
             {
-                e.choices[0].Item2();
+                e.Item2[0].Item2();
                 SaveManager.Save(this);
                 StartCoroutine(DelayedShowMap());
             }
