@@ -9,10 +9,15 @@ namespace HanoiGame
     /// </summary>
     public static class EffectManager
     {
+        public static string Execute(CardData card, BattleManager battle)
+        {
+            return Execute(card, battle, card.element);
+        }
+
         /// <summary>
         /// Execute a card's combat effect. Returns a log message describing what happened.
         /// </summary>
-        public static string Execute(CardData card, BattleManager battle)
+        public static string Execute(CardData card, BattleManager battle, Element? attackElement)
         {
             switch (card.effectType)
             {
@@ -349,11 +354,11 @@ namespace HanoiGame
             }
         }
 
-        private static string DoDamage(int baseDamage, bool pierce, BattleManager battle)
+        private static string DoDamage(int baseDamage, bool pierce, BattleManager battle, Element? element = null)
         {
             int atk = battle.baseATK + GameManager.Instance.permanentATKBonus;
             int totalDamage = Mathf.CeilToInt((baseDamage + atk) * battle.GetDamageMultiplier());
-            int actual = battle.DealDamageToEnemy(totalDamage, pierce);
+            int actual = battle.DealDamageToEnemy(totalDamage, pierce, element);
             SimpleAudio.Instance?.PlayDamage();
             string extra = pierce ? "（无视护盾）" : "";
             return $"造成{actual}点伤害{extra}";

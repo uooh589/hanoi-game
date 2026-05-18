@@ -111,6 +111,13 @@ namespace HanoiGame
             escHandler.genshinBtn = genshinBtn;
             escHandler.quitBtn = quitBtn;
             escHandler.escPanel = escPanel;
+            // Volume controls
+            escHandler.musicVolText = Txt("EscMusicVol", escPanel.transform, "BGM: 30%", 11, new Vector2(-100, -230), font, 120, 20);
+            escHandler.sfxVolText = Txt("EscSfxVol", escPanel.transform, "音效: 10%", 11, new Vector2(100, -230), font, 120, 20);
+            escHandler.musicUpBtn = Btn("EscMusicUp", escPanel.transform, "+", new Vector2(-150, -230), font, 40, 20);
+            escHandler.musicDownBtn = Btn("EscMusicDn", escPanel.transform, "-", new Vector2(-50, -230), font, 40, 20);
+            escHandler.sfxUpBtn = Btn("EscSfxUp", escPanel.transform, "+", new Vector2(50, -230), font, 40, 20);
+            escHandler.sfxDnBtn = Btn("EscSfxDn", escPanel.transform, "-", new Vector2(150, -230), font, 40, 20);
 
             // ========== MAP ==========
             var mapPanel = NewPanel("MapPanel", canvas.transform, false);

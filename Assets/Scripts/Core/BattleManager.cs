@@ -191,17 +191,28 @@ namespace HanoiGame
         /// <summary>Undo last move, returns true if successful</summary>
         public bool UndoMove()
         {
-            if (lastPuzzleState == null || lastHandIndex < 0) return false;
-            if (stepsRemaining <= 0 && lastHandIndex != -1) return false; // need at least 1 step
-            stepsRemaining--;
-            var puzzle = handPuzzles[lastHandIndex];
+            if (lastPuzzleState == null || lastHandIndex < -1) return false;
+            HanoiPuzzle puzzle;
+            if (lastHandIndex == -1)
+            {
+                // Undo task panel move — need task steps
+                if (taskStepsRemaining <= 0) return false;
+                taskStepsRemaining++;
+                puzzle = taskPuzzle;
+            }
+            else
+            {
+                if (stepsRemaining <= 0) return false;
+                stepsRemaining--;
+                puzzle = handPuzzles[lastHandIndex];
+            }
             if (puzzle == null) return false;
             puzzle.peg0 = new List<int>(lastPuzzleState.peg0);
             puzzle.peg1 = new List<int>(lastPuzzleState.peg1);
             puzzle.peg2 = new List<int>(lastPuzzleState.peg2);
             puzzle.targetPeg = lastPuzzleState.targetPeg;
             lastPuzzleState = null;
-            lastHandIndex = -1;
+            lastHandIndex = -2;
             OnStateChanged?.Invoke();
             return true;
         }
@@ -265,7 +276,7 @@ namespace HanoiGame
 
             // Execute effect (combo from PREVIOUS card applies here via GetDamageMultiplier)
             float savedCombo = comboMultiplier;
-            string log = EffectManager.Execute(card, this);
+            string log = EffectManager.Execute(card, this, card.element);
 
             // After execution, decrement combo charges
             if (comboCharges > 0)
@@ -403,11 +414,12 @@ namespace HanoiGame
             if (enemy == null) return 0;
 
             int remaining = rawDamage;
+            bool crit = false;
 
-            // Elemental weakness: 2x damage if attack element matches enemy weakness
             if (attackElement != null && enemy.weakness == attackElement)
             {
                 remaining *= 2;
+                crit = true;
                 AddBattleLog($"元素克制！{attackElement}→{enemy.enemyName}，伤害×2！");
             }
 
@@ -420,7 +432,7 @@ namespace HanoiGame
 
             enemy.currentHP -= remaining;
             if (enemy.currentHP < 0) enemy.currentHP = 0;
-            return rawDamage;
+            return crit ? rawDamage * 2 : rawDamage;
         }
 
         public void AddShield(int amount)

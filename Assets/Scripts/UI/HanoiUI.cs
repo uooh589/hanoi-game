@@ -139,7 +139,7 @@ namespace HanoiGame
         // ── disks ──
         void ClearDisks()
         {
-            for (int p = 0; p < 3; p++) { if (_diskObjects[p] == null) _diskObjects[p] = new(); foreach (var d in _diskObjects[p]) Destroy(d); _diskObjects[p].Clear(); }
+            for (int p = 0; p < 3; p++) { if (_diskObjects[p] == null) _diskObjects[p] = new(); foreach (var d in _diskObjects[p]) Destroy(d); _diskObjects[p].Clear(); if (_pegHighlights[p] != null) _pegHighlights[p].color = Color.clear; }
         }
 
         void BuildDisks()
