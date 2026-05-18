@@ -48,6 +48,10 @@ namespace HanoiGame
         [Header("Hanoi Panels")]
         public HanoiUI[] hanoiUIs;
 
+        [Header("Announcements")]
+        public Text turnAnnounceText;
+        public Image playerAvatar;
+
         [Header("Task Overlay")]
         public GameObject taskOverlay;
         public HanoiUI taskHanoiUI;
@@ -98,6 +102,20 @@ namespace HanoiGame
             }
 
             // Task overlay button wiring
+            // Wire player avatar to open stats panel
+            if (playerAvatar != null)
+            {
+                var abtn = playerAvatar.GetComponent<Button>();
+                if (abtn != null)
+                {
+                    abtn.onClick.RemoveAllListeners();
+                    abtn.onClick.AddListener(() => { SimpleAudio.Instance?.PlayClick(); ShowStatsPanel(); });
+                }
+            }
+
+            // Show turn announcement
+            ShowAnnouncement("你的回合");
+
             // Wire enemy portrait to open stats
             if (enemyPortrait != null)
             {
@@ -237,6 +255,19 @@ namespace HanoiGame
                 GameManager.Instance.taskSteps = _battle.taskStepsRemaining;
             }
         }
+
+        void ShowAnnouncement(string msg)
+        {
+            if (turnAnnounceText != null)
+            {
+                turnAnnounceText.text = msg;
+                turnAnnounceText.gameObject.SetActive(true);
+                turnAnnounceText.canvasRenderer.SetAlpha(1f);
+                turnAnnounceText.CrossFadeAlpha(0f, 1.5f, false);
+                Invoke(nameof(HideAnnouncement), 2f);
+            }
+        }
+        void HideAnnouncement() { if (turnAnnounceText != null) turnAnnounceText.gameObject.SetActive(false); }
 
         void ShowStatsPanel()
         {

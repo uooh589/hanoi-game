@@ -238,17 +238,28 @@ namespace HanoiGame
         {
             var panel = NewPanel("BattlePanel", canvasParent, false);
 
-            // Player info - top left
+            // Player info - top left with avatar + card border
             var pi = new GameObject("PlayerInfo", typeof(RectTransform));
             pi.transform.SetParent(panel.transform, false);
             var pirt = pi.GetComponent<RectTransform>();
             pirt.anchorMin = pirt.anchorMax = new Vector2(0, 1);
-            pirt.anchoredPosition = new Vector2(180, -30);
+            pirt.pivot = new Vector2(0, 1);
+            pirt.sizeDelta = new Vector2(300, 110);
+            pirt.anchoredPosition = new Vector2(15, -10);
+            // Card-style dark backdrop
+            var piBg = pi.gameObject.AddComponent<Image>();
+            piBg.color = new Color(0.1f, 0.08f, 0.06f, 0.8f);
+            piBg.raycastTarget = false;
 
-            Txt("PlayerHPText", pi.transform, "HP: 50/50", 14, Vector2.zero, font, 180, 20);
-            Txt("PlayerShieldText", pi.transform, "", 12, new Vector2(0, -22), font, 180, 18);
-            Txt("PlayerATKText", pi.transform, "攻: 5", 12, new Vector2(0, -42), font, 180, 18);
-            Txt("StepMultiplierText", pi.transform, "倍率: x1.00", 12, new Vector2(0, -60), font, 180, 18);
+            // Traveler avatar
+            var pAvatar = NewImage(pi.transform, "PlayerAvatar", Color.clear, new Vector2(65, 65), new Vector2(42, -55));
+            pAvatar.type = Image.Type.Simple; pAvatar.preserveAspect = true; pAvatar.raycastTarget = true;
+            pAvatar.gameObject.AddComponent<Button>();
+
+            Txt("PlayerHPText", pi.transform, "HP: 60/60", 14, new Vector2(110, -15), font, 170, 20);
+            Txt("PlayerShieldText", pi.transform, "", 12, new Vector2(110, -38), font, 170, 18);
+            Txt("PlayerATKText", pi.transform, "攻: 3", 12, new Vector2(110, -60), font, 170, 18);
+            Txt("StepMultiplierText", pi.transform, "倍率: x1.00", 11, new Vector2(110, -80), font, 170, 18);
 
             // ── Enemy info: top-right, portrait left + text right ──
             var ei = new GameObject("EnemyInfo", typeof(RectTransform));
@@ -321,6 +332,9 @@ namespace HanoiGame
 
             // Wire up BattleUI
             var battleUI = panel.AddComponent<BattleUI>();
+            battleUI.playerAvatar = pi.transform.Find("PlayerAvatar")?.GetComponent<Image>();
+            battleUI.turnAnnounceText = Txt("TurnAnnounceText", panel.transform, "", 28, new Vector2(0, 100), font, 400, 50);
+            battleUI.turnAnnounceText.gameObject.SetActive(false);
             battleUI.playerHPText = GetTxt(pi.transform, "PlayerHPText");
             battleUI.playerShieldText = GetTxt(pi.transform, "PlayerShieldText");
             battleUI.playerATKText = GetTxt(pi.transform, "PlayerATKText");

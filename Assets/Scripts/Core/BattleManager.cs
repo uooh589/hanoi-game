@@ -15,7 +15,20 @@ namespace HanoiGame
         public int playerShield;
         public int baseATK = 3;
         public float damageBonus = 0f;
-        public Dictionary<int, int> cardsCompletedThisTurn = new(); // fatigue: track completions per card ID // temporary one-turn damage bonus (additive with ATK)
+        public Dictionary<string, int> cardsCompletedThisTurn = new(); // fatigue per effectType+towerLevel
+
+        public float GetFatigueMultiplier(string key)
+        {
+            if (!cardsCompletedThisTurn.ContainsKey(key)) return 1f;
+            int count = cardsCompletedThisTurn[key];
+            return count switch { 0 => 1f, 1 => 1f, 2 => 0.6f, _ => 0.3f };
+        }
+
+        public void RecordCardCompletion(string key)
+        {
+            cardsCompletedThisTurn.TryGetValue(key, out int c);
+            cardsCompletedThisTurn[key] = c + 1;
+        } // temporary one-turn damage bonus (additive with ATK)
 
         [Header("Turn State")]
         public CardData[] currentHand = new CardData[3];
@@ -277,7 +290,9 @@ namespace HanoiGame
 
             // Execute effect (combo from PREVIOUS card applies here via GetDamageMultiplier)
             float savedCombo = comboMultiplier;
-            string log = EffectManager.Execute(card, this, card.element, card.towerLevel);
+            string fatigueKey = $"{card.effectType}_{card.towerLevel}";
+            string log = EffectManager.Execute(card, this, card.element, card.towerLevel, fatigueKey);
+            RecordCardCompletion(fatigueKey);
 
             // After execution, decrement combo charges
             if (comboCharges > 0)
