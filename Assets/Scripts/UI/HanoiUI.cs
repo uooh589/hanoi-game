@@ -62,12 +62,31 @@ namespace HanoiGame
         {
             if (IsPreview) return;
             string elemName = CardData?.element.ToString().ToLower() ?? "default";
+
+            // Card background
             var tex = Resources.Load<Texture2D>($"card_{elemName}");
             if (tex == null) tex = Resources.Load<Texture2D>("card_default");
             if (tex != null)
             {
                 var img = GetComponent<Image>();
                 if (img != null) { img.sprite = Sprite.Create(tex, new Rect(0,0,tex.width,tex.height), Vector2.one*0.5f); img.color = Color.white; }
+            }
+
+            // Element icon in top-left corner
+            var iconTex = Resources.Load<Texture2D>($"icon_{elemName}");
+            if (iconTex != null)
+            {
+                var iconGo = new GameObject("ElemIcon", typeof(Image));
+                iconGo.transform.SetParent(transform, false);
+                var iconImg = iconGo.GetComponent<Image>();
+                iconImg.sprite = Sprite.Create(iconTex, new Rect(0,0,iconTex.width,iconTex.height), Vector2.one*0.5f);
+                iconImg.color = Color.white;
+                iconImg.raycastTarget = false;
+                var irt = iconGo.GetComponent<RectTransform>();
+                irt.anchorMin = irt.anchorMax = new Vector2(0, 1);
+                irt.pivot = new Vector2(0, 1);
+                irt.sizeDelta = new Vector2(24, 24);
+                irt.anchoredPosition = new Vector2(6, -6);
             }
         }
 
