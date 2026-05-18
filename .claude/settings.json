@@ -1,0 +1,60 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash.*buildTarget Win64.*|Bash.*buildLinux64Player.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '⚠️ 构建前请确认已运行 SceneBuilder.Build 重建场景！如果刚修改过 SceneBuilder.cs 或 UI 布局，请先执行: /home/liuhan/Unity/Hub/Editor/2022.3.62f3c1/Editor/Unity -quit -batchmode -nographics -projectPath /home/liuhan/hanoi-game -executeMethod HanoiGame.SceneBuilder.Build'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/liuhan/hanoi-game && grep -rn 'error CS' Library/ 2>/dev/null | head -3 || true"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(npm:*)",
+      "Bash(curl:*)",
+      "Bash(yt-dlp:*)",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(du:*)",
+      "Bash(stat:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(chmod:*)",
+      "Bash(pkill:*)",
+      "Bash(python3:*)",
+      "Bash(zip:*)",
+      "Bash(tar:*)",
+      "Bash(echo:*)",
+      "Bash(wc:*)",
+      "Bash(which:*)",
+      "Bash(cd:*)",
+      "Bash(./publish.sh:*)",
+      "Bash(file:*)",
+      "Bash(host:*)",
+      "Bash(strings:*)",
+      "Bash(awk:*)",
+      "Bash(sed:*)"
+    ]
+  }
+}
