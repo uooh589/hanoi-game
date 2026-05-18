@@ -16,7 +16,7 @@ namespace HanoiGame
             _cached = Font.CreateDynamicFontFromOSFont("Noto Sans CJK SC", 14);
             if (_cached != null) return _cached;
 
-            _cached = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            _cached = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             return _cached;
         }
 

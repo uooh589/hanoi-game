@@ -32,8 +32,8 @@ namespace HanoiGame
                 if (!go.scene.IsValid() || go.hideFlags != HideFlags.None) continue;
                 else if (go.scene == EditorSceneManager.GetActiveScene()) Object.DestroyImmediate(go);
 
-            var font = AssetDatabase.LoadAssetAtPath<Font>("Assets/NotoSansCJK.ttc")
-                ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
+            var font = AssetDatabase.LoadAssetAtPath<Font>("Assets/Resources/NotoSansSC.ttf")
+                ?? Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
             // ========== CORE ==========
             var camGo = new GameObject("Main Camera", typeof(Camera), typeof(AudioListener));
