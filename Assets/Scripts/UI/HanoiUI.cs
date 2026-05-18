@@ -55,6 +55,20 @@ namespace HanoiGame
             BuildBase();
             BuildDisks();
             UpdateLabels();
+            ApplyElementTheme();
+        }
+
+        void ApplyElementTheme()
+        {
+            if (IsPreview) return;
+            string elemName = CardData?.element.ToString().ToLower() ?? "default";
+            var tex = Resources.Load<Texture2D>($"card_{elemName}");
+            if (tex == null) tex = Resources.Load<Texture2D>("card_default");
+            if (tex != null)
+            {
+                var img = GetComponent<Image>();
+                if (img != null) { img.sprite = Sprite.Create(tex, new Rect(0,0,tex.width,tex.height), Vector2.one*0.5f); img.color = Color.white; }
+            }
         }
 
         public void RefreshPuzzle(HanoiPuzzle puzzle, CardData cardData)
@@ -168,7 +182,13 @@ namespace HanoiGame
         void UpdateLabels()
         {
             if (_infoText && CardData != null)
-                _infoText.text = CardData.isTaskCard ? $"8层★ {CardData.effectDescription}" : $"{CardData.towerLevel}层: {CardData.effectDescription}";
+            {
+                string elemTag = CardData.isTaskCard ? "" : $"【{CardData.element}】";
+                string desc = CardData.effectDescription;
+                // Shorten if too long
+                if (desc.Length > 20) desc = desc.Substring(0, 18) + "..";
+                _infoText.text = CardData.isTaskCard ? $"★ {desc}" : $"{elemTag} {desc}";
+            }
             if (_progressText)
                 _progressText.text = (CardData != null && CardData.isTaskCard) ? $"进度 {Puzzle?.stepsUsed ?? 0}/255" : "";
             if (_borderImage)
