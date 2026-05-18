@@ -140,11 +140,11 @@ namespace HanoiGame
             ig.transform.SetParent(transform, false);
             _infoText = ig.GetComponent<Text>();
             _infoText.font = uiFont; _infoText.fontSize = 10; _infoText.alignment = TextAnchor.UpperCenter;
-            _infoText.color = Color.white; _infoText.raycastTarget = false;
+            _infoText.color = new Color(1f, 0.88f, 0.55f); _infoText.raycastTarget = false;
             _infoText.rectTransform.anchorMin = _infoText.rectTransform.anchorMax = new Vector2(0.5f, 1);
             _infoText.rectTransform.pivot = new Vector2(0.5f, 1);
-            _infoText.rectTransform.sizeDelta = new Vector2(_pw - 12, 40);
-            _infoText.rectTransform.anchoredPosition = new Vector2(0, 0);
+            _infoText.rectTransform.sizeDelta = new Vector2(_pw - 12, 36);
+            _infoText.rectTransform.anchoredPosition = new Vector2(0, -6);
 
             var pg = new GameObject("Prog", typeof(Text));
             pg.transform.SetParent(transform, false);

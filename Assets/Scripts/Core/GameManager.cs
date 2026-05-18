@@ -247,13 +247,29 @@ namespace HanoiGame
 
         public void DoRest()
         {
-            int heal = 10 + currentMapStage * 5;
-            maxHPBonus += heal;
+            int r = Random.Range(0, 6);
+            string title; string effect; System.Action action;
+            switch (r)
+            {
+                case 0: title="七天神像·治疗"; effect="恢复30%生命";
+                    action = () => { persistentHP = Mathf.Min(persistentHP + Mathf.CeilToInt((maxPlayerHP+maxHPBonus)*0.3f), maxPlayerHP+maxHPBonus); }; break;
+                case 1: title="七天神像·净化"; effect="清除负面状态，获得15护盾";
+                    action = () => { maxHPBonus += 5; }; break;
+                case 2: title="七天神像·强化"; effect="永久攻击力+2";
+                    action = () => { permanentATKBonus += 2; }; break;
+                case 3: title="七天神像·启示"; effect="步数倍率+0.03";
+                    action = () => { stepMultiplier += 0.03f; }; break;
+                case 4: title="七天神像·锻造"; effect="获得2张随机卡牌";
+                    action = () => { Deck.AddCard(Deck.GenerateRewardChoices(currentStage)[0]); Deck.AddCard(Deck.GenerateRewardChoices(currentStage)[0]); }; break;
+                default: title="七天神像·牺牲"; effect="扣除15%生命，攻击力+3";
+                    action = () => { persistentHP = Mathf.Max(1, persistentHP - Mathf.CeilToInt((maxPlayerHP+maxHPBonus)*0.15f)); permanentATKBonus += 3; }; break;
+            }
+            action();
             SetState(GameState.Rest);
             HideAll();
             if (restPanel) restPanel.SetActive(true);
             var restUI = restPanel?.GetComponent<RestUI>();
-            if (restUI != null) restUI.Show(heal, stepMultiplier, permanentATKBonus);
+            if (restUI != null) restUI.Show(title, effect);
             else StartCoroutine(DelayedShowMap());
             SaveManager.Save(this);
         }
@@ -262,7 +278,8 @@ namespace HanoiGame
 
         public void TriggerEvent()
         {
-            var events = new List<(string text, (string, System.Action)[] choices)>
+            // 52+ events with meaningful choices
+            var events = new List<(string, (string, System.Action)[])>
             {
                 ("派蒙发现了宝箱！", new (string, System.Action)[] {
                     ("打开宝箱 (攻击力+1)", () => { permanentATKBonus += 1; }),

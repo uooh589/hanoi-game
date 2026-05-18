@@ -9,11 +9,11 @@ namespace HanoiGame
         public Text effectText;
         public Button continueButton;
 
-        public void Show(int healAmount, float stepMult, int atkBonus)
+        public void Show(string title, string effect)
         {
             gameObject.SetActive(true);
-            if (infoText) infoText.text = "七天神像的祝福";
-            if (effectText) effectText.text = $"生命上限永久 +{healAmount}\n当前元素共鸣 ×{stepMult:F2}\n攻击力加成 +{atkBonus}";
+            if (infoText) infoText.text = title;
+            if (effectText) effectText.text = effect;
             if (continueButton)
             {
                 continueButton.onClick.RemoveAllListeners();
