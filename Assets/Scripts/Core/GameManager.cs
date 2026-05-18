@@ -22,7 +22,8 @@ namespace HanoiGame
         public int currentMapStage;
         public int mora;
         public int taskSteps;
-        public int persistentHP; // HP persists between battles
+        public int persistentHP;
+        public int maxPlayerHP = 60; // base max HP reference for events
 
         [Header("Deck")]
         public DeckManager Deck = new DeckManager();
@@ -292,6 +293,30 @@ namespace HanoiGame
                     ("参加茶会 (卡牌+倍率+0.01)", () => { Deck.AddCard(Deck.GenerateRewardChoices(currentStage)[0]); stepMultiplier+=0.01f; }),
                     ("切磋剑术 (攻击力+3)", () => { permanentATKBonus += 3; }),
                     ("拒绝邀请 (倍率+0.02)", () => { stepMultiplier += 0.02f; })
+                }),
+                ("七七发现了古老的药方！", new (string, System.Action)[] {
+                    ("配制药方 (恢复生命上限30%)", () => { persistentHP = Mathf.Min(persistentHP + Mathf.CeilToInt((maxPlayerHP+maxHPBonus)*0.3f), maxPlayerHP+maxHPBonus); }),
+                    ("出售药方 (获得2张卡牌)", () => { Deck.AddCard(Deck.GenerateRewardChoices(currentStage)[0]); Deck.AddCard(Deck.GenerateRewardChoices(currentStage)[0]); })
+                }),
+                ("流浪的剑客请求与你比试", new (string, System.Action)[] {
+                    ("全力应战 (攻+2, 扣20%生命)", () => { permanentATKBonus+=2; persistentHP=Mathf.Max(1,persistentHP-Mathf.CeilToInt((maxPlayerHP+maxHPBonus)*0.2f)); }),
+                    ("携手同行 (获得卡牌+治疗10%)", () => { Deck.AddCard(Deck.GenerateRewardChoices(currentStage)[0]); persistentHP=Mathf.Min(persistentHP+Mathf.CeilToInt((maxPlayerHP+maxHPBonus)*0.1f), maxPlayerHP+maxHPBonus); }),
+                    ("果断拒绝 (无事发生)", () => {})
+                }),
+                ("神秘的炼金术士在兜售药剂", new (string, System.Action)[] {
+                    ("购买力量药剂 (攻+3, 生命-15%)", () => { permanentATKBonus+=3; persistentHP=Mathf.Max(1,persistentHP-Mathf.CeilToInt((maxPlayerHP+maxHPBonus)*0.15f)); }),
+                    ("购买生命药剂 (恢复40%生命)", () => { persistentHP = Mathf.Min(persistentHP + Mathf.CeilToInt((maxPlayerHP+maxHPBonus)*0.4f), maxPlayerHP+maxHPBonus); }),
+                    ("购买神秘药剂 (随机卡牌×3)", () => { for(int i=0;i<3;i++) Deck.AddCard(Deck.GenerateRewardChoices(currentStage)[0]); })
+                }),
+                ("凝光提出了商业合作", new (string, System.Action)[] {
+                    ("投资矿业 (倍率+0.03, 攻+1)", () => { stepMultiplier+=0.03f; permanentATKBonus+=1; }),
+                    ("投资贸易 (摩拉+80, 卡牌×2)", () => { mora+=80; Deck.AddCard(Deck.GenerateRewardChoices(currentStage)[0]); Deck.AddCard(Deck.GenerateRewardChoices(currentStage)[0]); }),
+                    ("婉拒投资 (无损)", () => {})
+                }),
+                ("刻晴请你帮忙解决璃月事务", new (string, System.Action)[] {
+                    ("加班处理 (攻+2, 倍率+0.01, 扣25%HP)", () => { permanentATKBonus+=2; stepMultiplier+=0.01f; persistentHP=Mathf.Max(1,persistentHP-Mathf.CeilToInt((maxPlayerHP+maxHPBonus)*0.25f)); }),
+                    ("推荐甘雨 (攻+1, 无损)", () => { permanentATKBonus+=1; }),
+                    ("推给钟离 (无事发生)", () => {})
                 }),
             };
 

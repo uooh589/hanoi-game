@@ -59,7 +59,7 @@ namespace HanoiGame
         public static MapData Generate(int stage)
         {
             var map = new MapData();
-            int n = 6 + Mathf.Min(stage + 1, 4); // 7-10 floors, much less compact
+            int n = 9 + Mathf.Min(stage + 2, 6); // 11-15 floors, Slay the Spire-like
             map.totalFloors = n;
 
             // Floor 0: start
