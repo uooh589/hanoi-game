@@ -252,7 +252,7 @@ namespace HanoiGame
             piBg.raycastTarget = false;
 
             // Traveler avatar
-            var pAvatar = NewImage(pi.transform, "PlayerAvatar", Color.clear, new Vector2(65, 65), new Vector2(42, -55));
+            var pAvatar = NewImage(pi.transform, "PlayerAvatar", Color.clear, new Vector2(60, 60), new Vector2(50, -55));
             pAvatar.type = Image.Type.Simple; pAvatar.preserveAspect = true; pAvatar.raycastTarget = true;
             pAvatar.gameObject.AddComponent<Button>();
 

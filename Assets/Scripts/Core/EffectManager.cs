@@ -59,8 +59,11 @@ namespace HanoiGame
 
                 case EffectType.StepRecovery:
                     {
-                        battle.stepsRemaining += card.effectValue1;
-                        return $"恢复{card.effectValue1}步";
+                        float fMult = string.IsNullOrEmpty(fatigueKey) ? 1f : battle.GetFatigueMultiplier(fatigueKey);
+                        int steps = Mathf.CeilToInt(card.effectValue1 * fMult);
+                        battle.stepsRemaining += steps;
+                        string tag = fMult < 1f ? $"[疲劳×{fMult:F1}]" : "";
+                        return $"恢复{steps}步{tag}";
                     }
 
                 case EffectType.ComboChain:
@@ -118,8 +121,11 @@ namespace HanoiGame
 
                 case EffectType.MidStepRecovery:
                     {
-                        battle.stepsRemaining += card.effectValue1;
-                        return $"恢复{card.effectValue1}步";
+                        float fMult = string.IsNullOrEmpty(fatigueKey) ? 1f : battle.GetFatigueMultiplier(fatigueKey);
+                        int steps = Mathf.CeilToInt(card.effectValue1 * fMult);
+                        battle.stepsRemaining += steps;
+                        string tag = fMult < 1f ? $"[疲劳×{fMult:F1}]" : "";
+                        return $"恢复{steps}步{tag}";
                     }
 
                 case EffectType.MidComboChain:
@@ -163,10 +169,13 @@ namespace HanoiGame
 
                 case EffectType.ShieldBonusSteps:
                     {
+                        float fMult2 = string.IsNullOrEmpty(fatigueKey) ? 1f : battle.GetFatigueMultiplier(fatigueKey);
+                        int bonus = Mathf.CeilToInt(card.effectValue2 * fMult2);
                         battle.AddShield(card.effectValue1);
-                        battle.stepsRemaining += card.effectValue2;
+                        battle.stepsRemaining += bonus;
                         SimpleAudio.Instance?.PlayShield();
-                        return $"获得{card.effectValue1}点护盾，+{card.effectValue2}步";
+                        string tag2 = fMult2 < 1f ? $"[疲劳×{fMult2:F1}]" : "";
+                        return $"获得{card.effectValue1}点护盾，+{bonus}步{tag2}";
                     }
 
                 case EffectType.HeavyShield:

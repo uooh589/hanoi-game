@@ -21,7 +21,7 @@ namespace HanoiGame
         {
             if (!cardsCompletedThisTurn.ContainsKey(key)) return 1f;
             int count = cardsCompletedThisTurn[key];
-            return count switch { 0 => 1f, 1 => 1f, 2 => 0.6f, _ => 0.3f };
+            return count switch { 0 => 1f, 1 => 0.6f, 2 => 0.4f, _ => 0.25f };
         }
 
         public void RecordCardCompletion(string key)
@@ -131,6 +131,7 @@ namespace HanoiGame
             if (_battleEnded) return;
             _playerTurn = true;
             stepsConsumedThisTurn = 0;
+            cardsCompletedThisTurn.Clear();
             refreshCharges = maxRefreshCharges;
 
             // Apply player poison
@@ -290,9 +291,13 @@ namespace HanoiGame
 
             // Execute effect (combo from PREVIOUS card applies here via GetDamageMultiplier)
             float savedCombo = comboMultiplier;
+            if (savedCombo > 1f && card.effectType != EffectType.ComboChain && card.effectType != EffectType.MidComboChain && card.effectType != EffectType.HeavyComboChain)
+            {
+                AddBattleLog($"连携生效！伤害+{(int)((savedCombo-1f)*100)}%");
+            }
             string fatigueKey = $"{card.effectType}_{card.towerLevel}";
-            string log = EffectManager.Execute(card, this, card.element, card.towerLevel, fatigueKey);
             RecordCardCompletion(fatigueKey);
+            string log = EffectManager.Execute(card, this, card.element, card.towerLevel, fatigueKey);
 
             // After execution, decrement combo charges
             if (comboCharges > 0)
