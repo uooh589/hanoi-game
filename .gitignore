@@ -1,0 +1,11 @@
+/Library/
+/Temp/
+/Obj/
+/Builds/
+/Logs/
+/UserSettings/
+*.zip
+*.tar.gz
+*.log
+/received_logs/
+/uploads/
