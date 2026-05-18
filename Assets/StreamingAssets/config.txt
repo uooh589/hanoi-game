@@ -1,7 +1,2 @@
-# Hanoi Game config — edit these URLs for your server
-# GitHub raw URL for version checks (free):
-# update_url=https://raw.githubusercontent.com/你的用户名/你的仓库/main/VERSION
-# For self-hosted log server:
-# log_url=http://你的服务器:8080/log
-update_url=
+update_url=https://raw.githubusercontent.com/uooh589/hanoi-game/master/VERSION
 log_url=
