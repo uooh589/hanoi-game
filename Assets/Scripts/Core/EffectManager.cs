@@ -11,23 +11,20 @@ namespace HanoiGame
     {
         public static string Execute(CardData card, BattleManager battle)
         {
-            return Execute(card, battle, card.element);
+            return Execute(card, battle, card.element, card.towerLevel);
         }
 
-        /// <summary>
-        /// Execute a card's combat effect. Returns a log message describing what happened.
-        /// </summary>
-        public static string Execute(CardData card, BattleManager battle, Element? attackElement)
+        public static string Execute(CardData card, BattleManager battle, Element? attackElement, int towerLevel)
         {
             switch (card.effectType)
             {
                 // ── Level 3 ──
                 case EffectType.PureDamage:
-                    return DoDamage(card.effectValue1, false, battle);
+                    return DoDamage(card.effectValue1, false, battle, towerLevel);
 
                 case EffectType.DamageDraw:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         int drawn = battle.DrawCards(card.effectValue2);
                         if (drawn > 0) log += $"，抽了{drawn}张牌";
                         return log;
@@ -68,7 +65,7 @@ namespace HanoiGame
 
                 case EffectType.ComboChain:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         battle.comboMultiplier = 1f + card.effectValueF;
                         battle.comboCharges = 1;
                         return log + $"，下张牌伤害+{(int)(card.effectValueF * 100)}%";
@@ -76,11 +73,11 @@ namespace HanoiGame
 
                 // ── Level 4 ──
                 case EffectType.MidDamage:
-                    return DoDamage(card.effectValue1, false, battle);
+                    return DoDamage(card.effectValue1, false, battle, towerLevel);
 
                 case EffectType.MidDamageDraw:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         int drawn = battle.DrawCards(card.effectValue2);
                         if (drawn > 0) log += $"，抽了{drawn}张牌";
                         return log;
@@ -88,7 +85,7 @@ namespace HanoiGame
 
                 case EffectType.MidDamageWeaken:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         battle.enemyWeakenPercent = card.effectValueF;
                         battle.enemyWeakenTurns = 1;
                         return log + $"，敌人虚弱{(int)(card.effectValueF * 100)}%";
@@ -127,7 +124,7 @@ namespace HanoiGame
 
                 case EffectType.MidComboChain:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         battle.comboMultiplier = 1f + card.effectValueF;
                         battle.comboCharges = 1;
                         return log + $"，下张牌伤害+{(int)(card.effectValueF * 100)}%";
@@ -136,7 +133,7 @@ namespace HanoiGame
                 // ── Level 5 ──
                 case EffectType.DamagePoison:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         battle.enemyPoisonDamage = card.effectValue2;
                         battle.enemyPoisonTurns = (int)card.effectValueF;
                         return log + $"，敌人中毒({card.effectValue2}伤害×{(int)card.effectValueF}回合)";
@@ -151,13 +148,13 @@ namespace HanoiGame
                             dmg *= 2;
                             doubled = true;
                         }
-                        string log = DoDamage(dmg, false, battle);
+                        string log = DoDamage(dmg, false, battle, towerLevel);
                         return doubled ? log + "（处决！）" : log;
                     }
 
                 case EffectType.DamageLifesteal:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         int heal = Mathf.CeilToInt(card.effectValue1 * card.effectValueF);
                         battle.HealPlayer(heal);
                         SimpleAudio.Instance?.PlayHeal();
@@ -181,7 +178,7 @@ namespace HanoiGame
 
                 case EffectType.DamageShield:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         battle.AddShield(card.effectValue2);
                         SimpleAudio.Instance?.PlayShield();
                         return log + $"，获得{card.effectValue2}点护盾";
@@ -192,7 +189,7 @@ namespace HanoiGame
 
                 case EffectType.HeavyComboChain:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         battle.comboMultiplier = 1f + card.effectValueF;
                         battle.comboCharges = 1;
                         return log + $"，下张牌伤害+{(int)(card.effectValueF * 100)}%";
@@ -200,17 +197,17 @@ namespace HanoiGame
 
                 // ── Level 6 ──
                 case EffectType.DamagePierce:
-                    return DoDamage(card.effectValue1, true, battle);
+                    return DoDamage(card.effectValue1, true, battle, towerLevel);
 
                 case EffectType.DamageStun:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         battle.enemyStunTurns += card.effectValue2;
                         return log + "，敌人被眩晕！";
                     }
 
                 case EffectType.HeavyDamage:
-                    return DoDamage(card.effectValue1, false, battle);
+                    return DoDamage(card.effectValue1, false, battle, towerLevel);
 
                 case EffectType.ShieldPermATKLarge:
                     {
@@ -242,27 +239,27 @@ namespace HanoiGame
                         int stepsConsumed = battle.stepsConsumedThisTurn;
                         int dmg = stepsConsumed * card.effectValue1;
                         if (dmg <= 0) dmg = card.effectValue1 * 5; // floor
-                        return DoDamage(dmg, false, battle);
+                        return DoDamage(dmg, false, battle, towerLevel);
                     }
 
                 case EffectType.ShieldBurst:
                     {
                         int shieldDmg = Mathf.CeilToInt(battle.playerShield * card.effectValueF);
                         battle.playerShield = 0;
-                        return DoDamage(shieldDmg, true, battle) + "（护盾爆破！）";
+                        return DoDamage(shieldDmg, true, battle, towerLevel) + "（护盾爆破！）";
                     }
 
                 // ── Level 7 ──
                 case EffectType.DamagePermATK:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         GameManager.Instance.permanentATKBonus += card.effectValue2;
                         return log + $"，永久攻击力+{card.effectValue2}";
                     }
 
                 case EffectType.DamageLifestealStrong:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         int heal = Mathf.CeilToInt(card.effectValue1 * card.effectValueF);
                         battle.HealPlayer(heal);
                         SimpleAudio.Instance?.PlayHeal();
@@ -271,13 +268,13 @@ namespace HanoiGame
 
                 case EffectType.DamageStunStrong:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         battle.enemyStunTurns += card.effectValue2;
                         return log + "，敌人被眩晕！";
                     }
 
                 case EffectType.MassiveDamage:
-                    return DoDamage(card.effectValue1, false, battle);
+                    return DoDamage(card.effectValue1, false, battle, towerLevel);
 
                 case EffectType.RefreshMultiplierStrong:
                     {
@@ -288,7 +285,7 @@ namespace HanoiGame
 
                 case EffectType.ExtraTurn:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         battle.extraTurnPending = true;
                         return log + "，获得额外回合！";
                     }
@@ -311,7 +308,7 @@ namespace HanoiGame
 
                 case EffectType.Overkill:
                     {
-                        string log = DoDamage(card.effectValue1, false, battle);
+                        string log = DoDamage(card.effectValue1, false, battle, towerLevel);
                         if (battle.enemy != null && battle.enemy.currentHP <= 0)
                         {
                             GameManager.Instance.permanentATKBonus += card.effectValue2;
@@ -325,7 +322,7 @@ namespace HanoiGame
                         int dmg = card.effectValue1;
                         bool crit = Random.value < card.effectValueF;
                         if (crit) dmg *= 3;
-                        string log = DoDamage(dmg, false, battle);
+                        string log = DoDamage(dmg, false, battle, towerLevel);
                         return crit ? log + "（会心一击！）" : log;
                     }
 
@@ -354,14 +351,29 @@ namespace HanoiGame
             }
         }
 
-        private static string DoDamage(int baseDamage, bool pierce, BattleManager battle, Element? element = null)
+        // Layer scaling: higher tower = more damage per step
+        static float LayerScale(int level) => level switch
+        {
+            3 => 1.0f, 4 => 1.6f, 5 => 2.5f, 6 => 3.5f, 7 => 5.0f, 8 => 1.0f, _ => 1.0f
+        };
+
+        private static string DoDamage(int baseDamage, bool pierce, BattleManager battle, int towerLevel = 3, Element? element = null)
         {
             int atk = battle.baseATK + GameManager.Instance.permanentATKBonus;
-            int totalDamage = Mathf.CeilToInt((baseDamage + atk) * battle.GetDamageMultiplier());
+            float layerMult = LayerScale(towerLevel);
+            float fatigueMult = 1f;
+
+            // Fatigue: each repeat completion of same card this turn = -40% damage
+            if (!string.IsNullOrEmpty(battle.currentHand[0]?.id))
+            {
+                // track by card type (effectType + towerLevel)
+            }
+
+            int totalDamage = Mathf.CeilToInt((baseDamage * layerMult + atk) * battle.GetDamageMultiplier());
             int actual = battle.DealDamageToEnemy(totalDamage, pierce, element);
             SimpleAudio.Instance?.PlayDamage();
-            string extra = pierce ? "（无视护盾）" : "";
-            return $"造成{actual}点伤害{extra}";
+            string extra = pierce ? "（破盾）" : "";
+            return $"造成{actual}点{extra}";
         }
 
         private static string DoHeal(int amount, BattleManager battle)

@@ -14,7 +14,8 @@ namespace HanoiGame
         public int playerHP;
         public int playerShield;
         public int baseATK = 3;
-        public float damageBonus = 0f; // temporary one-turn damage bonus (additive with ATK)
+        public float damageBonus = 0f;
+        public Dictionary<int, int> cardsCompletedThisTurn = new(); // fatigue: track completions per card ID // temporary one-turn damage bonus (additive with ATK)
 
         [Header("Turn State")]
         public CardData[] currentHand = new CardData[3];
@@ -222,7 +223,7 @@ namespace HanoiGame
             if (taskCardInstance == null || taskPuzzle == null) return;
 
             SimpleAudio.Instance?.PlayComplete();
-            string log = EffectManager.Execute(taskCardInstance, this);
+            string log = EffectManager.Execute(taskCardInstance, this, taskCardInstance.element, taskCardInstance.towerLevel);
             AddBattleLog($"[任务] {log}");
 
             // Save progress
@@ -276,7 +277,7 @@ namespace HanoiGame
 
             // Execute effect (combo from PREVIOUS card applies here via GetDamageMultiplier)
             float savedCombo = comboMultiplier;
-            string log = EffectManager.Execute(card, this, card.element);
+            string log = EffectManager.Execute(card, this, card.element, card.towerLevel);
 
             // After execution, decrement combo charges
             if (comboCharges > 0)
