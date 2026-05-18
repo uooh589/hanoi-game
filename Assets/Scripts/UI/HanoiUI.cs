@@ -106,18 +106,22 @@ namespace HanoiGame
             var ig = new GameObject("Info", typeof(Text));
             ig.transform.SetParent(transform, false);
             _infoText = ig.GetComponent<Text>();
-            _infoText.font = uiFont; _infoText.fontSize = 11; _infoText.alignment = TextAnchor.MiddleCenter;
-            _infoText.color = Color.white; _infoText.raycastTarget = false;
-            _infoText.rectTransform.sizeDelta = new Vector2(_pw - 8, 28);
-            _infoText.rectTransform.anchoredPosition = new Vector2(0, _ph - 16);
+            _infoText.font = uiFont; _infoText.fontSize = 10; _infoText.alignment = TextAnchor.UpperCenter;
+            _infoText.color = new Color(1f, 0.9f, 0.7f); _infoText.raycastTarget = false;
+            _infoText.rectTransform.anchorMin = _infoText.rectTransform.anchorMax = new Vector2(0.5f, 1);
+            _infoText.rectTransform.pivot = new Vector2(0.5f, 1);
+            _infoText.rectTransform.sizeDelta = new Vector2(_pw - 12, 40);
+            _infoText.rectTransform.anchoredPosition = new Vector2(0, 0);
 
             var pg = new GameObject("Prog", typeof(Text));
             pg.transform.SetParent(transform, false);
             _progressText = pg.GetComponent<Text>();
-            _progressText.font = uiFont; _progressText.fontSize = 9; _progressText.alignment = TextAnchor.MiddleCenter;
+            _progressText.font = uiFont; _progressText.fontSize = 9; _progressText.alignment = TextAnchor.LowerCenter;
             _progressText.color = new Color(1f, 0.84f, 0f); _progressText.raycastTarget = false;
-            _progressText.rectTransform.sizeDelta = new Vector2(_pw - 8, 14);
-            _progressText.rectTransform.anchoredPosition = new Vector2(0, _ph - 30);
+            _progressText.rectTransform.anchorMin = _progressText.rectTransform.anchorMax = new Vector2(0.5f, 0);
+            _progressText.rectTransform.pivot = new Vector2(0.5f, 0);
+            _progressText.rectTransform.sizeDelta = new Vector2(_pw - 12, 16);
+            _progressText.rectTransform.anchoredPosition = new Vector2(0, 2);
         }
 
         GameObject MakeRect(string name, float cx, float cy, float w, float h, Color color, bool raycast = false)

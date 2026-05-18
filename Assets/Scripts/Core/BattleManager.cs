@@ -99,7 +99,11 @@ namespace HanoiGame
 
         private void Awake()
         {
-            playerHP = playerMaxHP + GameManager.Instance.maxHPBonus;
+            // Use persistent HP from GameManager, or init fresh
+            int max = playerMaxHP + GameManager.Instance.maxHPBonus;
+            if (GameManager.Instance.persistentHP <= 0 || GameManager.Instance.persistentHP > max)
+                GameManager.Instance.persistentHP = max;
+            playerHP = GameManager.Instance.persistentHP;
             enemyStage = GameManager.Instance.currentStage;
             taskCardInstance = GameManager.Instance.Deck.cards.Find(c => c.isTaskCard);
 
@@ -132,6 +136,7 @@ namespace HanoiGame
             _playerTurn = true;
             stepsConsumedThisTurn = 0;
             cardsCompletedThisTurn.Clear();
+            playerShield = 0; // shield resets each turn
             refreshCharges = maxRefreshCharges;
 
             // Apply player poison
@@ -525,7 +530,8 @@ namespace HanoiGame
         private void EndBattle(bool victory)
         {
             _battleEnded = true;
-            // Save task progress
+            // Save persistent HP
+            GameManager.Instance.persistentHP = playerHP;
             if (taskPuzzle != null && taskCardInstance != null)
             {
                 taskPuzzle.SaveToCardData(taskCardInstance);

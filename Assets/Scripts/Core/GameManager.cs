@@ -21,7 +21,8 @@ namespace HanoiGame
         public int currentStage = 1;
         public int currentMapStage;
         public int mora;
-        public int taskSteps; // persistent steps for 8-layer task card
+        public int taskSteps;
+        public int persistentHP; // HP persists between battles
 
         [Header("Deck")]
         public DeckManager Deck = new DeckManager();
