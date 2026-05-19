@@ -68,6 +68,7 @@ namespace HanoiGame
 
             ctrlGo.AddComponent<VersionManager>();
             ctrlGo.AddComponent<LogManager>();
+            ctrlGo.AddComponent<NetworkManager>();
 
             // ========== MAIN MENU ==========
             var menuPanel = NewPanel("MainMenuPanel", canvas.transform, false);
@@ -78,7 +79,31 @@ namespace HanoiGame
             menuUI.newGameButton = Btn("NewGameButton", menuPanel.transform, "新游戏", new Vector2(0, 30), font);
             menuUI.continueButton = Btn("ContinueButton", menuPanel.transform, "继续", new Vector2(0, -40), font);
             menuUI.libraryButton = Btn("LibraryButton", menuPanel.transform, "图书馆", new Vector2(0, -110), font);
-            menuUI.quitButton = Btn("QuitButton", menuPanel.transform, "退出", new Vector2(0, -180), font);
+            var lobbyBtn = Btn("LobbyButton", menuPanel.transform, "联机", new Vector2(0, -180), font);
+            menuUI.quitButton = Btn("QuitButton", menuPanel.transform, "退出", new Vector2(0, -250), font);
+
+            // ========== LOBBY PANEL ==========
+            var lobbyPanel = NewPanel("LobbyPanel", canvas.transform, false);
+            lobbyPanel.SetActive(false);
+            var lobbyUI = lobbyPanel.AddComponent<LobbyUI>();
+            lobbyUI.hostBtn = Btn("LobbyHostBtn", lobbyPanel.transform, "创建房间", new Vector2(0, 80), font);
+            lobbyUI.joinBtn = Btn("LobbyJoinBtn", lobbyPanel.transform, "加入房间", new Vector2(0, 20), font);
+            lobbyUI.backBtn = Btn("LobbyBackBtn", lobbyPanel.transform, "返回", new Vector2(0, -80), font);
+            var ipGo = new GameObject("IPInput", typeof(RectTransform), typeof(InputField), typeof(Image));
+            ipGo.transform.SetParent(lobbyPanel.transform, false);
+            ipGo.GetComponent<Image>().color = new Color(0.2f,0.18f,0.15f);
+            ipGo.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 34);
+            ipGo.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -40);
+            var ipPlaceholder = new GameObject("PH", typeof(Text));
+            ipPlaceholder.transform.SetParent(ipGo.transform, false);
+            var ph2 = ipPlaceholder.GetComponent<Text>(); ph2.text = "输入主机IP..."; ph2.font=font; ph2.fontSize=14; ph2.color=Color.gray; ph2.alignment=TextAnchor.MiddleCenter;
+            ph2.rectTransform.sizeDelta = new Vector2(240,30);
+            var ipf = ipGo.GetComponent<InputField>(); ipf.placeholder=ph2; ipf.textComponent=ph2;
+            lobbyUI.ipInput = ipf;
+            lobbyUI.statusText = Txt("LobbyStatus", lobbyPanel.transform, "LAN联机模式", 14, new Vector2(0, 140), font, 400, 40);
+
+            // Wire lobby button
+            lobbyBtn.onClick.AddListener(() => { SimpleAudio.Instance?.PlayClick(); lobbyPanel.SetActive(true); });
 
             // ========== STATS PANEL (shared overlay) ==========
             var statsPanel = NewPanel("StatsPanel", canvas.transform, false);

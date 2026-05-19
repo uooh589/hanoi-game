@@ -80,6 +80,13 @@ namespace HanoiGame
             BGMPlayer.Instance?.Play(BGMPlayer.Theme.MainMenu);
         }
 
+        public void StartCoopGame()
+        {
+            // Co-op: both players share the map and take turns in battle
+            StartNewGame();
+            Debug.Log("[GameManager] Co-op game started");
+        }
+
         public void StartNewGame()
         {
             SaveManager.DeleteSave();
