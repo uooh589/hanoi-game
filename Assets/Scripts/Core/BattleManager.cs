@@ -82,6 +82,9 @@ namespace HanoiGame
         public System.Action OnStateChanged;
         public System.Action<int> OnCardCompleted; // handIndex
         public System.Action OnTaskCompleted;
+        public System.Action<string, Color> OnReactionTriggered;
+        public System.Action<int, bool> OnDamageDealt;
+        public System.Action<int> OnFlashPanel;
         public System.Action<string> OnBattleLog;
 
         public bool isEliteBattle;
@@ -311,11 +314,19 @@ namespace HanoiGame
                 if (comboCharges <= 0) comboMultiplier = 1f;
             }
             AddBattleLog($"[{card.towerLevel}层{card.element}] {log}");
+            OnFlashPanel?.Invoke(handIndex);
+            if (card.effectType.ToString().Contains("Damage") || card.effectType == EffectType.ComboChain)
+                OnDamageDealt?.Invoke(card.effectValue1 + baseATK + GameManager.Instance.permanentATKBonus, false);
 
             // Elemental reaction
             if (!card.isTaskCard)
             {
                 var reaction = ElementReactions.TryReact(card.element, this);
+                if (!string.IsNullOrEmpty(reaction.name))
+                {
+                    Color rColor = card.element switch { Element.Pyro => new Color(1f,0.3f,0f), Element.Cryo => new Color(0.4f,0.8f,1f), Element.Hydro => new Color(0.2f,0.5f,1f), Element.Electro => new Color(0.6f,0.3f,1f), Element.Anemo => new Color(0.3f,0.8f,0.6f), Element.Geo => new Color(0.8f,0.6f,0.2f), Element.Dendro => new Color(0.3f,0.8f,0.3f), _ => Color.white };
+                    OnReactionTriggered?.Invoke(reaction.name, rColor);
+                }
                 if (reaction.bonusDmg > 0) DealDamageToEnemy(reaction.bonusDmg, true);
                 if (reaction.shield > 0) AddShield(reaction.shield);
                 if (reaction.heal > 0) HealPlayer(reaction.heal);

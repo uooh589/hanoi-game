@@ -62,6 +62,9 @@ namespace HanoiGame
         private BattleManager _battle;
         private float _updateTimer;
         private bool _wired;
+        private System.Action<string, Color> _onReaction;
+        private System.Action<int, bool> _onDamage;
+        private System.Action<int> _onFlash;
 
         private void OnEnable()
         {
@@ -86,6 +89,12 @@ namespace HanoiGame
 
             _battle.OnBattleLog += OnLogMessage;
             _battle.OnStateChanged += OnStateHandler;
+            _onReaction = (name, color) => ShowReaction(name, color);
+            _onDamage = (dmg, crit) => ShowDamageNumber(dmg, crit);
+            _onFlash = (idx) => FlashPanel(idx);
+            _battle.OnReactionTriggered += _onReaction;
+            _battle.OnDamageDealt += _onDamage;
+            _battle.OnFlashPanel += _onFlash;
 
             _battle.BeginBattle();
             RebuildHanoiPanels();
@@ -188,6 +197,9 @@ namespace HanoiGame
             {
                 _battle.OnBattleLog -= OnLogMessage;
                 _battle.OnStateChanged -= OnStateHandler;
+                if (_onReaction != null) _battle.OnReactionTriggered -= _onReaction;
+                if (_onDamage != null) _battle.OnDamageDealt -= _onDamage;
+                if (_onFlash != null) _battle.OnFlashPanel -= _onFlash;
             }
         }
 
@@ -275,11 +287,70 @@ namespace HanoiGame
                 turnAnnounceText.text = msg;
                 turnAnnounceText.gameObject.SetActive(true);
                 turnAnnounceText.canvasRenderer.SetAlpha(1f);
-                turnAnnounceText.CrossFadeAlpha(0f, 1.5f, false);
-                Invoke(nameof(HideAnnouncement), 2f);
+                turnAnnounceText.transform.localScale = Vector3.one * 0.5f;
+                // Scale up + fade
+                LeanTween.scale(turnAnnounceText.gameObject, Vector3.one * 1.2f, 0.3f).setEaseOutBack();
+                LeanTween.alphaText(turnAnnounceText.rectTransform, 0f, 1.8f).setDelay(0.5f);
+                Invoke(nameof(HideAnnouncement), 2.5f);
             }
         }
         void HideAnnouncement() { if (turnAnnounceText != null) turnAnnounceText.gameObject.SetActive(false); }
+
+        /// <summary>Show big elemental reaction announcement in center screen</summary>
+        public void ShowReaction(string reactionName, Color elemColor)
+        {
+            if (turnAnnounceText != null)
+            {
+                turnAnnounceText.text = $"【{reactionName}】";
+                turnAnnounceText.color = elemColor;
+                turnAnnounceText.gameObject.SetActive(true);
+                turnAnnounceText.canvasRenderer.SetAlpha(1f);
+                turnAnnounceText.transform.localScale = Vector3.one * 0.3f;
+                LeanTween.scale(turnAnnounceText.gameObject, Vector3.one * 1.5f, 0.4f).setEaseOutElastic();
+                LeanTween.alphaText(turnAnnounceText.rectTransform, 0f, 2.5f).setDelay(1.2f);
+                Invoke(nameof(HideAnnouncement), 3f);
+            }
+        }
+
+        /// <summary>Floating damage number at enemy position</summary>
+        public void ShowDamageNumber(int dmg, bool crit)
+        {
+            var go = new GameObject("DmgNum", typeof(Text));
+            go.transform.SetParent(transform, false);
+            var t = go.GetComponent<Text>();
+            t.text = crit ? $"{dmg}!!" : $"{dmg}";
+            t.fontSize = crit ? 28 : 20;
+            t.color = crit ? new Color(1f, 0.5f, 0f) : Color.white;
+            t.font = FontHelper.GetFont(20);
+            t.alignment = TextAnchor.MiddleCenter;
+            t.raycastTarget = false;
+            var rt = t.rectTransform;
+            rt.anchorMin = rt.anchorMax = new Vector2(0.7f, 0.65f);
+            rt.sizeDelta = new Vector2(120, 40);
+            rt.anchoredPosition = new Vector2(Random.Range(-20, 20), Random.Range(-10, 30));
+            LeanTween.moveY(rt, rt.anchoredPosition.y + 60f, 1f).setEaseOutQuad();
+            LeanTween.alphaText(rt, 0f, 0.8f).setDelay(0.3f);
+            Destroy(go, 1.5f);
+        }
+
+        /// <summary>Gold flash on Hanoi panel completion</summary>
+        public void FlashPanel(int handIndex)
+        {
+            if (hanoiUIs != null && handIndex >= 0 && handIndex < hanoiUIs.Length && hanoiUIs[handIndex] != null)
+            {
+                var panel = hanoiUIs[handIndex].gameObject;
+                var flash = new GameObject("Flash", typeof(Image));
+                flash.transform.SetParent(panel.transform, false);
+                var fi = flash.GetComponent<Image>();
+                fi.color = new Color(1f, 0.84f, 0f, 0.5f);
+                fi.raycastTarget = false;
+                var frt = flash.GetComponent<RectTransform>();
+                frt.anchorMin = frt.anchorMax = Vector2.one * 0.5f;
+                frt.sizeDelta = new Vector2(400, 280);
+                LeanTween.alpha(frt, 0f, 0.5f).setEaseOutQuad();
+                Destroy(flash, 0.6f);
+            }
+        }
 
         void ShowStatsPanel()
         {
