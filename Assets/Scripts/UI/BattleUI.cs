@@ -285,18 +285,22 @@ namespace HanoiGame
             if (turnAnnounceText != null)
             {
                 turnAnnounceText.text = msg;
+                turnAnnounceText.color = Color.white;
                 turnAnnounceText.gameObject.SetActive(true);
                 turnAnnounceText.canvasRenderer.SetAlpha(1f);
-                turnAnnounceText.transform.localScale = Vector3.one * 0.5f;
-                // Scale up + fade
-                LeanTween.scale(turnAnnounceText.gameObject, Vector3.one * 1.2f, 0.3f).setEaseOutBack();
-                LeanTween.alphaText(turnAnnounceText.rectTransform, 0f, 1.8f).setDelay(0.5f);
-                Invoke(nameof(HideAnnouncement), 2.5f);
+                StartCoroutine(AnimateAnnouncement(2f));
             }
         }
-        void HideAnnouncement() { if (turnAnnounceText != null) turnAnnounceText.gameObject.SetActive(false); }
+        System.Collections.IEnumerator AnimateAnnouncement(float dur)
+        {
+            float t = 0f; Vector3 s = Vector3.one * 0.5f; Vector3 e = Vector3.one * 1.2f;
+            while (t < 0.3f) { t += Time.deltaTime; turnAnnounceText.transform.localScale = Vector3.Lerp(s, e, t/0.3f); yield return null; }
+            yield return new WaitForSeconds(dur - 0.6f);
+            t = 0f;
+            while (t < 0.5f) { t += Time.deltaTime; turnAnnounceText.canvasRenderer.SetAlpha(1f - t/0.5f); yield return null; }
+            turnAnnounceText.gameObject.SetActive(false);
+        }
 
-        /// <summary>Show big elemental reaction announcement in center screen</summary>
         public void ShowReaction(string reactionName, Color elemColor)
         {
             if (turnAnnounceText != null)
@@ -305,51 +309,62 @@ namespace HanoiGame
                 turnAnnounceText.color = elemColor;
                 turnAnnounceText.gameObject.SetActive(true);
                 turnAnnounceText.canvasRenderer.SetAlpha(1f);
-                turnAnnounceText.transform.localScale = Vector3.one * 0.3f;
-                LeanTween.scale(turnAnnounceText.gameObject, Vector3.one * 1.5f, 0.4f).setEaseOutElastic();
-                LeanTween.alphaText(turnAnnounceText.rectTransform, 0f, 2.5f).setDelay(1.2f);
-                Invoke(nameof(HideAnnouncement), 3f);
+                StartCoroutine(AnimateReaction(2.5f));
             }
         }
+        System.Collections.IEnumerator AnimateReaction(float dur)
+        {
+            float t = 0f;
+            while (t < 0.4f) { t += Time.deltaTime; float p = t/0.4f; turnAnnounceText.transform.localScale = Vector3.one * (0.3f + 1.2f * p - 0.6f * p * p); yield return null; }
+            yield return new WaitForSeconds(dur - 0.9f);
+            t = 0f;
+            while (t < 0.5f) { t += Time.deltaTime; turnAnnounceText.canvasRenderer.SetAlpha(1f - t/0.5f); yield return null; }
+            turnAnnounceText.gameObject.SetActive(false);
+        }
 
-        /// <summary>Floating damage number at enemy position</summary>
         public void ShowDamageNumber(int dmg, bool crit)
+        {
+            StartCoroutine(AnimateDamage(dmg, crit));
+        }
+        System.Collections.IEnumerator AnimateDamage(int dmg, bool crit)
         {
             var go = new GameObject("DmgNum", typeof(Text));
             go.transform.SetParent(transform, false);
             var t = go.GetComponent<Text>();
-            t.text = crit ? $"{dmg}!!" : $"{dmg}";
-            t.fontSize = crit ? 28 : 20;
-            t.color = crit ? new Color(1f, 0.5f, 0f) : Color.white;
-            t.font = FontHelper.GetFont(20);
+            t.text = crit ? $"{dmg}!!" : $"-{dmg}";
+            t.fontSize = crit ? 26 : 18;
+            t.color = crit ? new Color(1f, 0.4f, 0f) : new Color(1f, 0.6f, 0.4f);
+            t.font = FontHelper.GetFont(18);
             t.alignment = TextAnchor.MiddleCenter;
             t.raycastTarget = false;
             var rt = t.rectTransform;
-            rt.anchorMin = rt.anchorMax = new Vector2(0.7f, 0.65f);
-            rt.sizeDelta = new Vector2(120, 40);
-            rt.anchoredPosition = new Vector2(Random.Range(-20, 20), Random.Range(-10, 30));
-            LeanTween.moveY(rt, rt.anchoredPosition.y + 60f, 1f).setEaseOutQuad();
-            LeanTween.alphaText(rt, 0f, 0.8f).setDelay(0.3f);
-            Destroy(go, 1.5f);
+            rt.anchorMin = rt.anchorMax = new Vector2(0.75f, 0.6f);
+            rt.sizeDelta = new Vector2(100, 36);
+            rt.anchoredPosition = new Vector2(Random.Range(-30, 30), Random.Range(-10, 40));
+            float elapsed = 0f, duration = 1.2f;
+            float startY = rt.anchoredPosition.y;
+            while (elapsed < duration) { elapsed += Time.deltaTime; float p = elapsed/duration; rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, startY + 50f * p); t.canvasRenderer.SetAlpha(1f - p); yield return null; }
+            Destroy(go);
         }
 
-        /// <summary>Gold flash on Hanoi panel completion</summary>
         public void FlashPanel(int handIndex)
         {
             if (hanoiUIs != null && handIndex >= 0 && handIndex < hanoiUIs.Length && hanoiUIs[handIndex] != null)
-            {
-                var panel = hanoiUIs[handIndex].gameObject;
-                var flash = new GameObject("Flash", typeof(Image));
-                flash.transform.SetParent(panel.transform, false);
-                var fi = flash.GetComponent<Image>();
-                fi.color = new Color(1f, 0.84f, 0f, 0.5f);
-                fi.raycastTarget = false;
-                var frt = flash.GetComponent<RectTransform>();
-                frt.anchorMin = frt.anchorMax = Vector2.one * 0.5f;
-                frt.sizeDelta = new Vector2(400, 280);
-                LeanTween.alpha(frt, 0f, 0.5f).setEaseOutQuad();
-                Destroy(flash, 0.6f);
-            }
+                StartCoroutine(AnimateFlash(hanoiUIs[handIndex].gameObject));
+        }
+        System.Collections.IEnumerator AnimateFlash(GameObject panel)
+        {
+            var flash = new GameObject("Flash", typeof(Image));
+            flash.transform.SetParent(panel.transform, false);
+            var fi = flash.GetComponent<Image>();
+            fi.color = new Color(1f, 0.84f, 0f, 0.4f);
+            fi.raycastTarget = false;
+            var frt = flash.GetComponent<RectTransform>();
+            frt.anchorMin = frt.anchorMax = Vector2.one * 0.5f;
+            frt.sizeDelta = new Vector2(400, 280);
+            float t = 0f;
+            while (t < 0.5f) { t += Time.deltaTime; fi.canvasRenderer.SetAlpha(0.4f * (1f - t/0.5f)); yield return null; }
+            Destroy(flash);
         }
 
         void ShowStatsPanel()
