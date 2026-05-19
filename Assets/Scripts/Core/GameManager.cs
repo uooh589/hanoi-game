@@ -163,7 +163,6 @@ namespace HanoiGame
             {
                 var arti = ArtifactData.RollRandom();
                 artifacts.Add(arti);
-                AddBattleLog($"获得圣遗物: {arti.name}！");
             }
             SaveManager.Save(this);
 
