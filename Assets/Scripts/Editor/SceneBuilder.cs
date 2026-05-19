@@ -98,7 +98,7 @@ namespace HanoiGame
             libUI.effectsTab = Btn("LibEffectsTab", libPanel.transform, "效果", new Vector2(-10, 350), font, 100, 32);
             libUI.monstersTab = Btn("LibMonstersTab", libPanel.transform, "怪物", new Vector2(110, 350), font, 100, 32);
             // Search
-            var searchGo = new GameObject("LibSearch", typeof(InputField), typeof(Image));
+            var searchGo = new GameObject("LibSearch", typeof(RectTransform), typeof(InputField), typeof(Image));
             searchGo.transform.SetParent(libPanel.transform, false);
             var sfRt = searchGo.GetComponent<RectTransform>();
             sfRt.sizeDelta = new Vector2(200, 30); sfRt.anchoredPosition = new Vector2(250, 350);
@@ -116,14 +116,14 @@ namespace HanoiGame
             // Element filter toggles
             string[] elemNames = {"全部","火","冰","水","雷","风","岩","草","全"};
             libUI.elementToggles = new Toggle[elemNames.Length];
-            var elemGroup = new GameObject("ElemGroup", typeof(ToggleGroup));
+            var elemGroup = new GameObject("ElemGroup", typeof(RectTransform), typeof(ToggleGroup));
             elemGroup.transform.SetParent(libPanel.transform, false);
             var egRt = elemGroup.GetComponent<RectTransform>();
             egRt.sizeDelta = new Vector2(700, 28); egRt.anchoredPosition = new Vector2(0, 320);
             libUI.elementGroup = elemGroup.GetComponent<ToggleGroup>();
             for (int i = 0; i < elemNames.Length; i++)
             {
-                var tgo = new GameObject($"ElemToggle{i}", typeof(Toggle), typeof(Image));
+                var tgo = new GameObject($"ElemToggle{i}", typeof(RectTransform), typeof(Toggle), typeof(Image));
                 tgo.transform.SetParent(elemGroup.transform, false);
                 var tRt = tgo.GetComponent<RectTransform>();
                 tRt.sizeDelta = new Vector2(60, 22); tRt.anchoredPosition = new Vector2(-315 + i * 78, 0);
