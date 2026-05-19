@@ -2,16 +2,34 @@
   "hooks": {
     "PreToolUse": [
       {
+        "matcher": "Edit|Write.*\\.meta",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'BLOCKED: .meta files are Unity-managed. Do not edit them directly.' && exit 1"
+          }
+        ]
+      },
+      {
         "matcher": "Bash.*buildTarget Win64.*|Bash.*buildLinux64Player.*",
         "hooks": [
           {
             "type": "command",
-            "command": "echo '⚠️ 构建前请确认已运行 SceneBuilder.Build 重建场景！如果刚修改过 SceneBuilder.cs 或 UI 布局，请先执行: /home/liuhan/Unity/Hub/Editor/2022.3.62f3c1/Editor/Unity -quit -batchmode -nographics -projectPath /home/liuhan/hanoi-game -executeMethod HanoiGame.SceneBuilder.Build'"
+            "command": "echo 'BUILD REMINDER: Run SceneBuilder.Build first if SceneBuilder.cs or UI layout was modified.'"
           }
         ]
       }
     ],
     "PostToolUse": [
+      {
+        "matcher": "Edit.*SceneBuilder\\.cs",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'SCENEBUILDER CHANGED: Rebuild scene via -executeMethod HanoiGame.SceneBuilder.Build before next build'"
+          }
+        ]
+      },
       {
         "matcher": "Edit",
         "hooks": [
