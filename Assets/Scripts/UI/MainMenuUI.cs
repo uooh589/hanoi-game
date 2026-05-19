@@ -42,12 +42,16 @@ namespace HanoiGame
             }
 
             if (libraryButton != null)
+            {
+                // Find the LibraryPanel in Canvas children (even if inactive)
+                var canvas = transform.parent; // MainMenuPanel -> Canvas
+                var lib = canvas?.Find("LibraryPanel");
                 libraryButton.onClick.AddListener(() =>
                 {
                     SimpleAudio.Instance?.PlayClick();
-                    var lib = GameObject.Find("LibraryPanel");
-                    if (lib != null) lib.SetActive(true);
+                    if (lib != null) { lib.transform.SetAsLastSibling(); lib.gameObject.SetActive(true); }
                 });
+            }
 
             if (quitButton != null)
                 quitButton.onClick.AddListener(() =>
