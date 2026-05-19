@@ -360,6 +360,8 @@ namespace HanoiGame
             }
 
             OnCardCompleted?.Invoke(handIndex);
+            // Co-op sync
+            NetworkManager.Instance?.Send("effect", $"{card.towerLevel}|{card.element}|{log}");
 
             // Check enemy death
             if (enemy != null && enemy.currentHP <= 0)
