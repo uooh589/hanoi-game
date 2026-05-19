@@ -23,7 +23,9 @@ namespace HanoiGame
         public List<EnemyPattern> firstTurnPattern; // optional: override first turn
         public bool isElite, isBoss;
         public Element? nativeElement;
-        public Element? weakTo; // takes 2x damage from this
+        public Element? weakTo;
+        public int hitShield, thorns, regen;
+        public float evasion;
     }
 
     /// <summary>
@@ -62,7 +64,7 @@ namespace HanoiGame
                     pattern = new() { A(EnemyAction.Attack, 5, "水弹"), A(EnemyAction.HealSelf, 5, "水元素自愈"), A(EnemyAction.Attack, 5, "水弹") }},
                 new() { name = "雷史莱姆", region = "蒙德", baseHP = 24, baseATK = 7, nativeElement = Element.Electro, weakTo = Element.Cryo,
                     pattern = new() { A(EnemyAction.Attack, 7, "放电"), A(EnemyAction.Attack, 6, "电击"), A(EnemyAction.ReduceSteps, 2, "麻痹干扰") }},
-                new() { name = "岩史莱姆", region = "蒙德", baseHP = 34, baseATK = 5, nativeElement = Element.Geo, weakTo = Element.Geo,
+                new() { name = "岩史莱姆", region = "蒙德", baseHP = 34, baseATK = 5, nativeElement = Element.Geo, weakTo = Element.Geo, hitShield=2,
                     pattern = new() { A(EnemyAction.Defend, 6, "岩甲"), A(EnemyAction.Attack, 5, "岩弹"), A(EnemyAction.Attack, 5, "岩弹") }},
 
                 // Hilichurls

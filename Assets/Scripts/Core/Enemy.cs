@@ -11,6 +11,12 @@ namespace HanoiGame
         public int poisonDamage, poisonTurns;
         public Element? attachedElement;
         public Element? weakness;
+        public int hitShield;  // blocks first N hits (each hit = 1 dmg)
+        public int thorns;     // reflects X damage per hit
+        public float evasion;  // dodge chance 0-1
+        public float enrageThreshold = 0.5f; // HP% below which enrage triggers
+        public bool enraged;
+        public int regenPerTurn; // HP healed each enemy turn
         public bool firstAction = true;
 
         private EnemyDef _def;
@@ -38,6 +44,10 @@ namespace HanoiGame
                 poisonTurns = 0,
                 attachedElement = def.nativeElement,
                 weakness = def.weakTo,
+                hitShield = def.hitShield,
+                thorns = def.thorns,
+                evasion = def.evasion,
+                regenPerTurn = def.regen,
                 firstAction = true,
             };
         }

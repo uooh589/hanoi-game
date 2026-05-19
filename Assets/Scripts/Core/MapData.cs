@@ -189,13 +189,15 @@ namespace HanoiGame
             }
         }
 
-        /// <summary>Player can move to reachable nodes on the next floor that are connected from current.</summary>
+        /// <summary>Player can move to any reachable node on the next floor.</summary>
         public bool CanMoveTo(MapNode target)
         {
             if (currentNode == null) return target == startNode;
             if (target == currentNode || !target.reachable) return false;
             if (target.floor != currentNode.floor + 1) return false;
-            return currentNode.connections.Contains(target.index);
+            // Allow moving to adjacent nodes (same or ±1 index) on the next floor
+            int curIdx = currentNode.index;
+            return Mathf.Abs(target.index - curIdx) <= 1 || currentNode.connections.Contains(target.index);
         }
     }
 }

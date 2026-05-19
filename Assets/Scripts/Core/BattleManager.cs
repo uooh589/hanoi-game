@@ -90,6 +90,7 @@ namespace HanoiGame
         public bool isEliteBattle;
         public bool isBossBattle;
         public bool fastMode;
+        public int hitsThisCard; // track hits within a single card execution for multi-hit
         public float fastModeSpeed => fastMode ? 0.1f : 1f;
 
         // Undo support
@@ -298,6 +299,7 @@ namespace HanoiGame
             SimpleAudio.Instance?.PlayComplete();
 
             // Execute effect (combo from PREVIOUS card applies here via GetDamageMultiplier)
+            hitsThisCard = 0; // reset multi-hit counter per card
             float savedCombo = comboMultiplier;
             if (savedCombo > 1f && card.effectType != EffectType.ComboChain && card.effectType != EffectType.MidComboChain && card.effectType != EffectType.HeavyComboChain)
             {
@@ -453,6 +455,27 @@ namespace HanoiGame
 
             int remaining = rawDamage;
             bool crit = false;
+            hitsThisCard++;
+
+            // Hit-shield: first N hits deal only 1 damage
+            if (enemy.hitShield > 0)
+            {
+                enemy.hitShield--;
+                remaining = 1;
+                AddBattleLog($"护体！伤害降为1（剩余抵挡{hitsThisCard}次）");
+            }
+            // Thorns: reflect X damage per hit
+            if (enemy.thorns > 0)
+            {
+                playerHP -= enemy.thorns;
+                AddBattleLog($"荆棘反射{enemy.thorns}点伤害！");
+            }
+            // Evasion: X% chance to dodge
+            if (enemy.evasion > 0 && Random.value < enemy.evasion)
+            {
+                AddBattleLog($"{enemy.enemyName}闪避了攻击！");
+                return 0;
+            }
 
             if (attackElement != null && enemy.weakness == attackElement)
             {
