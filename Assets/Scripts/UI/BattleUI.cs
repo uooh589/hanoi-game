@@ -305,6 +305,8 @@ namespace HanoiGame
         {
             if (turnAnnounceText != null)
             {
+                // Show two element icon images flanking the text
+                var elem1 = ElementReactions.LastElement; // already consumed, but we saved it in BattleManager
                 turnAnnounceText.text = $"【{reactionName}】";
                 turnAnnounceText.color = elemColor;
                 turnAnnounceText.gameObject.SetActive(true);

@@ -321,6 +321,7 @@ namespace HanoiGame
             // Elemental reaction
             if (!card.isTaskCard)
             {
+                var prevElement = ElementReactions.LastElement;
                 var reaction = ElementReactions.TryReact(card.element, this);
                 if (!string.IsNullOrEmpty(reaction.name))
                 {
