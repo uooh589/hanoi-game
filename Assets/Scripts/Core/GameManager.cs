@@ -286,6 +286,20 @@ namespace HanoiGame
 
         public void OnRestComplete() { ShowMap(); }
 
+        public void TriggerRemoveCard()
+        {
+            if (Deck.cards.Count <= 1) { ShowMap(); return; }
+            int idx = Random.Range(0, Deck.cards.Count);
+            var removed = Deck.cards[idx];
+            Deck.cards.RemoveAt(idx);
+            SetState(GameState.Event);
+            HideAll();
+            if (eventPanel) eventPanel.SetActive(true);
+            var ui = eventPanel?.GetComponent<EventUI>();
+            if (ui != null) ui.Show($"你删除了卡牌: {removed.effectDescription}", new (string, System.Action)[] { ("确认", () => { SaveManager.Save(this); ShowMap(); }) });
+            else { SaveManager.Save(this); ShowMap(); }
+        }
+
         public void TriggerEvent()
         {
             // 52+ events with meaningful choices

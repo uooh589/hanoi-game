@@ -204,6 +204,7 @@ namespace HanoiGame
                 case MapNodeType.Event:   gm.TriggerEvent();     break;
                 case MapNodeType.Shop:    gm.OpenShop();         break;
                 case MapNodeType.Boss:    gm.StartBossBattle();  break;
+                case MapNodeType.Remove:  gm.TriggerRemoveCard(); break;
             }
         }
 

@@ -178,12 +178,24 @@ namespace HanoiGame
             mapPanel.GetComponent<Image>().sprite = LoadBgSprite("bg_map");
             mapPanel.GetComponent<Image>().color = Color.white;
             var mapUI = mapPanel.AddComponent<MapUI>();
-            var mapAreaGo = new GameObject("MapArea", typeof(RectTransform));
-            mapAreaGo.transform.SetParent(mapPanel.transform, false);
-            var maRt = mapAreaGo.GetComponent<RectTransform>();
-            maRt.anchorMin = new Vector2(0, 0); maRt.anchorMax = new Vector2(1, 1);
-            maRt.offsetMin = new Vector2(0, 100); maRt.offsetMax = new Vector2(0, -80);
-            mapUI.mapArea = maRt;
+            // Map scroll area
+            var scrollGo = new GameObject("MapScroll", typeof(RectTransform), typeof(ScrollRect), typeof(Image));
+            scrollGo.transform.SetParent(mapPanel.transform, false);
+            scrollGo.GetComponent<Image>().color = new Color(0,0,0,0);
+            var sr = scrollGo.GetComponent<ScrollRect>();
+            var srt = scrollGo.GetComponent<RectTransform>();
+            srt.anchorMin = new Vector2(0, 0); srt.anchorMax = new Vector2(1, 1);
+            srt.offsetMin = new Vector2(0, 80); srt.offsetMax = new Vector2(0, -50);
+
+            var contentGo = new GameObject("MapContent", typeof(RectTransform));
+            contentGo.transform.SetParent(scrollGo.transform, false);
+            var crt = contentGo.GetComponent<RectTransform>();
+            crt.anchorMin = new Vector2(0, 1); crt.anchorMax = new Vector2(1, 1);
+            crt.pivot = new Vector2(0.5f, 1);
+            crt.sizeDelta = new Vector2(0, 3000); // tall content for scrolling
+            sr.content = crt;
+            sr.horizontal = false; sr.vertical = true;
+            mapUI.mapArea = crt;
             mapUI.stageText = Txt("StageText", mapPanel.transform, "第 1 层", 22, new Vector2(0, 375), font);
             mapUI.moraText = Txt("MoraText_map", mapPanel.transform, "摩拉: 0", 14, new Vector2(400, 375), font, 160, 24);
             mapUI.deckButton = Btn("MapDeckBtn", mapPanel.transform, "卡组", new Vector2(500, 375), font, 90, 30);
