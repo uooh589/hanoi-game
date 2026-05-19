@@ -23,7 +23,8 @@ namespace HanoiGame
         public int mora;
         public int taskSteps;
         public int persistentHP;
-        public int maxPlayerHP = 60; // base max HP reference for events
+        public int maxPlayerHP = 60;
+        public List<ArtifactData> artifacts = new();
 
         [Header("Deck")]
         public DeckManager Deck = new DeckManager();
@@ -149,11 +150,21 @@ namespace HanoiGame
         {
             yield return new WaitForSeconds(1.5f);
 
-            // Battle reward: always give Mora
+            // Battle reward: Mora + artifact chance
             int baseGold = 30 + currentMapStage * 20;
-            if (CurrentMap?.currentNode?.type == MapNodeType.Elite) baseGold = (int)(baseGold * 1.8f);
-            else if (CurrentMap?.currentNode?.type == MapNodeType.Boss) baseGold = (int)(baseGold * 3f);
+            bool isElite = CurrentMap?.currentNode?.type == MapNodeType.Elite;
+            bool isBoss = CurrentMap?.currentNode?.type == MapNodeType.Boss;
+            if (isElite) baseGold = (int)(baseGold * 1.8f);
+            else if (isBoss) baseGold = (int)(baseGold * 3f);
             mora += baseGold + Random.Range(0, 30);
+
+            // Artifact drop: elite 30%, boss 100%
+            if (ArtifactData.CanAddMore && (isBoss || (isElite && Random.value < 0.3f)))
+            {
+                var arti = ArtifactData.RollRandom();
+                artifacts.Add(arti);
+                AddBattleLog($"获得圣遗物: {arti.name}！");
+            }
             SaveManager.Save(this);
 
             // Boss beaten → next map stage

@@ -243,6 +243,31 @@ namespace HanoiGame
                 var avTex = Resources.Load<Texture2D>("avatar_traveler");
                 if (avTex != null) { playerAvatar.sprite = Sprite.Create(avTex, new Rect(0,0,avTex.width,avTex.height), Vector2.one*0.5f); playerAvatar.color = Color.white; }
             }
+            // Show artifact icons under player info
+            var gm = GameManager.Instance;
+            if (gm != null && gm.artifacts.Count > 0)
+            {
+                var pi = transform.Find("PlayerInfo");
+                if (pi != null)
+                {
+                    for (int i = 0; i < gm.artifacts.Count; i++)
+                    {
+                        var arti = gm.artifacts[i];
+                        var iconGo = new GameObject($"Art_{i}", typeof(Image));
+                        iconGo.transform.SetParent(pi, false);
+                        var iconImg = iconGo.GetComponent<Image>();
+                        var tex = Resources.Load<Texture2D>(arti.iconName);
+                        if (tex != null) iconImg.sprite = Sprite.Create(tex, new Rect(0,0,tex.width,tex.height), Vector2.one*0.5f);
+                        iconImg.color = Color.white;
+                        iconImg.raycastTarget = false;
+                        var rt = iconGo.GetComponent<RectTransform>();
+                        rt.anchorMin = rt.anchorMax = new Vector2(0, 0);
+                        rt.pivot = new Vector2(0, 0.5f);
+                        rt.sizeDelta = new Vector2(24, 24);
+                        rt.anchoredPosition = new Vector2(8 + i * 28, 10);
+                    }
+                }
+            }
         }
 
         private void InitTaskPanel()
