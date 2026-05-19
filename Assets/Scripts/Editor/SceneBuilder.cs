@@ -435,7 +435,7 @@ namespace HanoiGame
             txtGo.transform.SetParent(go.transform, false);
             var t = txtGo.GetComponent<Text>();
             t.text = label; t.fontSize = 14; t.alignment = TextAnchor.MiddleCenter;
-            t.color = new Color(1f, 0.88f, 0.65f); t.font = font; t.raycastTarget = false;
+            t.color = Color.white; t.font = font; t.raycastTarget = false;
             t.rectTransform.anchorMin = Vector2.zero; t.rectTransform.anchorMax = Vector2.one;
             t.rectTransform.offsetMin = t.rectTransform.offsetMax = Vector2.zero;
 
