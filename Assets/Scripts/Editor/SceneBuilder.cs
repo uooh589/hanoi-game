@@ -79,8 +79,8 @@ namespace HanoiGame
             menuUI.newGameButton = Btn("NewGameButton", menuPanel.transform, "新游戏", new Vector2(0, 30), font);
             menuUI.continueButton = Btn("ContinueButton", menuPanel.transform, "继续", new Vector2(0, -40), font);
             menuUI.libraryButton = Btn("LibraryButton", menuPanel.transform, "图书馆", new Vector2(0, -110), font);
-            var lobbyBtn = Btn("LobbyButton", menuPanel.transform, "联机", new Vector2(0, -180), font);
-            menuUI.quitButton = Btn("QuitButton", menuPanel.transform, "退出", new Vector2(0, -250), font);
+            menuUI.lobbyButton = Btn("LobbyButton", menuPanel.transform, "联机", new Vector2(-120, -180), font);
+            menuUI.quitButton = Btn("QuitButton", menuPanel.transform, "退出", new Vector2(120, -180), font);
 
             // ========== LOBBY PANEL ==========
             var lobbyPanel = NewPanel("LobbyPanel", canvas.transform, false);
@@ -101,9 +101,6 @@ namespace HanoiGame
             var ipf = ipGo.GetComponent<InputField>(); ipf.placeholder=ph2; ipf.textComponent=ph2;
             lobbyUI.ipInput = ipf;
             lobbyUI.statusText = Txt("LobbyStatus", lobbyPanel.transform, "LAN联机模式", 14, new Vector2(0, 140), font, 400, 40);
-
-            // Wire lobby button
-            lobbyBtn.onClick.AddListener(() => { SimpleAudio.Instance?.PlayClick(); lobbyPanel.SetActive(true); });
 
             // ========== STATS PANEL (shared overlay) ==========
             var statsPanel = NewPanel("StatsPanel", canvas.transform, false);

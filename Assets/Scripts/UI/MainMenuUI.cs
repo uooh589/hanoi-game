@@ -13,6 +13,7 @@ namespace HanoiGame
         public Button newGameButton;
         public Button continueButton;
         public Button libraryButton;
+        public Button lobbyButton;
         public Button quitButton;
 
         [Header("Title")]
@@ -50,6 +51,17 @@ namespace HanoiGame
                 {
                     SimpleAudio.Instance?.PlayClick();
                     if (lib != null) { lib.transform.SetAsLastSibling(); lib.gameObject.SetActive(true); }
+                });
+            }
+
+            if (lobbyButton != null)
+            {
+                var canvas = transform.parent;
+                var lobby = canvas?.Find("LobbyPanel");
+                lobbyButton.onClick.AddListener(() =>
+                {
+                    SimpleAudio.Instance?.PlayClick();
+                    if (lobby != null) { lobby.transform.SetAsLastSibling(); lobby.gameObject.SetActive(true); }
                 });
             }
 
