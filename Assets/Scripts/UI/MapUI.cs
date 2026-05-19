@@ -14,10 +14,12 @@ namespace HanoiGame
 
         private MapData _map;
         private List<GameObject> _spawned = new();
+        private ScrollRect _scrollRect;
 
         private void OnEnable()
         {
             _map = GameManager.Instance?.CurrentMap;
+            _scrollRect = GetComponentInParent<ScrollRect>();
             if (_map != null) Build();
             if (deckButton != null)
             {
@@ -36,6 +38,13 @@ namespace HanoiGame
         }
 
         private void OnDisable() { Clear(); }
+
+        void Update()
+        {
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            if (scroll != 0 && _scrollRect != null)
+                _scrollRect.verticalNormalizedPosition = Mathf.Clamp01(_scrollRect.verticalNormalizedPosition + scroll * 0.3f);
+        }
 
         void Clear() { foreach (var g in _spawned) if (g) Destroy(g); _spawned.Clear(); }
 
