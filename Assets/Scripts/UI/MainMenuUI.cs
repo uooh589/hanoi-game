@@ -12,6 +12,7 @@ namespace HanoiGame
         [Header("Buttons")]
         public Button newGameButton;
         public Button continueButton;
+        public Button libraryButton;
         public Button quitButton;
 
         [Header("Title")]
@@ -39,6 +40,14 @@ namespace HanoiGame
                     GameManager.Instance.ContinueGame();
                 });
             }
+
+            if (libraryButton != null)
+                libraryButton.onClick.AddListener(() =>
+                {
+                    SimpleAudio.Instance?.PlayClick();
+                    var lib = GameObject.Find("LibraryPanel");
+                    if (lib != null) lib.SetActive(true);
+                });
 
             if (quitButton != null)
                 quitButton.onClick.AddListener(() =>

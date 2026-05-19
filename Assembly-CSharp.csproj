@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets/Scripts/Core/EnemyDatabase.cs" />
+    <Compile Include="Assets/Scripts/UI/LibraryUI.cs" />
     <Compile Include="Assets/Scripts/UI/MainMenuUI.cs" />
     <Compile Include="Assets/Scripts/UI/StatsPanelUI.cs" />
     <Compile Include="Assets/Scripts/UI/EventUI.cs" />

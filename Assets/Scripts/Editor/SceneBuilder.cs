@@ -77,7 +77,8 @@ namespace HanoiGame
             menuUI.titleText = Txt("TitleText", menuPanel.transform, "汉诺塔：轮回", 48, new Vector2(0, 120), font);
             menuUI.newGameButton = Btn("NewGameButton", menuPanel.transform, "新游戏", new Vector2(0, 30), font);
             menuUI.continueButton = Btn("ContinueButton", menuPanel.transform, "继续", new Vector2(0, -40), font);
-            menuUI.quitButton = Btn("QuitButton", menuPanel.transform, "退出", new Vector2(0, -110), font);
+            menuUI.libraryButton = Btn("LibraryButton", menuPanel.transform, "图书馆", new Vector2(0, -110), font);
+            menuUI.quitButton = Btn("QuitButton", menuPanel.transform, "退出", new Vector2(0, -180), font);
 
             // ========== STATS PANEL (shared overlay) ==========
             var statsPanel = NewPanel("StatsPanel", canvas.transform, false);
@@ -85,6 +86,59 @@ namespace HanoiGame
             var statsUI = statsPanel.AddComponent<StatsPanelUI>();
             statsUI.statsText = Txt("StatsText", statsPanel.transform, "", 13, new Vector2(0, 30), font, 560, 560);
             statsUI.closeButton = Btn("StatsCloseBtn", statsPanel.transform, "关闭", new Vector2(0, -360), font, 180, 40);
+
+            // ========== LIBRARY PANEL ==========
+            var libPanel = NewPanel("LibraryPanel", canvas.transform, false);
+            libPanel.SetActive(false);
+            var libUI = libPanel.AddComponent<LibraryUI>();
+            libUI.contentText = Txt("LibContent", libPanel.transform, "", 12, new Vector2(0, -20), font, 700, 600);
+            libUI.closeBtn = Btn("LibCloseBtn", libPanel.transform, "关闭", new Vector2(0, -380), font, 180, 40);
+            libUI.cardsTab = Btn("LibCardsTab", libPanel.transform, "卡牌", new Vector2(-250, 350), font, 100, 32);
+            libUI.eventsTab = Btn("LibEventsTab", libPanel.transform, "事件", new Vector2(-130, 350), font, 100, 32);
+            libUI.effectsTab = Btn("LibEffectsTab", libPanel.transform, "效果", new Vector2(-10, 350), font, 100, 32);
+            libUI.monstersTab = Btn("LibMonstersTab", libPanel.transform, "怪物", new Vector2(110, 350), font, 100, 32);
+            // Search
+            var searchGo = new GameObject("LibSearch", typeof(InputField), typeof(Image));
+            searchGo.transform.SetParent(libPanel.transform, false);
+            var sfRt = searchGo.GetComponent<RectTransform>();
+            sfRt.sizeDelta = new Vector2(200, 30); sfRt.anchoredPosition = new Vector2(250, 350);
+            var sfImg = searchGo.GetComponent<Image>();
+            sfImg.color = new Color(0.2f, 0.18f, 0.15f);
+            var sfPlaceholder = new GameObject("Placeholder", typeof(Text));
+            sfPlaceholder.transform.SetParent(searchGo.transform, false);
+            var ph = sfPlaceholder.GetComponent<Text>();
+            ph.text = "搜索..."; ph.font = font; ph.fontSize = 12; ph.color = Color.gray; ph.alignment = TextAnchor.MiddleLeft;
+            ph.rectTransform.anchorMin = ph.rectTransform.anchorMax = Vector2.one * 0.5f;
+            ph.rectTransform.sizeDelta = new Vector2(190, 26);
+            var sf = searchGo.GetComponent<InputField>();
+            sf.placeholder = ph; sf.textComponent = ph;
+            libUI.searchInput = sf;
+            // Element filter toggles
+            string[] elemNames = {"全部","火","冰","水","雷","风","岩","草","全"};
+            libUI.elementToggles = new Toggle[elemNames.Length];
+            var elemGroup = new GameObject("ElemGroup", typeof(ToggleGroup));
+            elemGroup.transform.SetParent(libPanel.transform, false);
+            var egRt = elemGroup.GetComponent<RectTransform>();
+            egRt.sizeDelta = new Vector2(700, 28); egRt.anchoredPosition = new Vector2(0, 320);
+            libUI.elementGroup = elemGroup.GetComponent<ToggleGroup>();
+            for (int i = 0; i < elemNames.Length; i++)
+            {
+                var tgo = new GameObject($"ElemToggle{i}", typeof(Toggle), typeof(Image));
+                tgo.transform.SetParent(elemGroup.transform, false);
+                var tRt = tgo.GetComponent<RectTransform>();
+                tRt.sizeDelta = new Vector2(60, 22); tRt.anchoredPosition = new Vector2(-315 + i * 78, 0);
+                tgo.GetComponent<Image>().color = new Color(0.2f, 0.18f, 0.15f);
+                var tBg = new GameObject("Background", typeof(Image));
+                tBg.transform.SetParent(tgo.transform, false); tBg.GetComponent<Image>().color = new Color(0.3f,0.25f,0.2f);
+                var tCk = new GameObject("Checkmark", typeof(Image));
+                tCk.transform.SetParent(tBg.transform, false); tCk.GetComponent<Image>().color = Color.yellow;
+                var tLbl = new GameObject("Label", typeof(Text));
+                tLbl.transform.SetParent(tgo.transform, false);
+                var tl = tLbl.GetComponent<Text>(); tl.text = elemNames[i]; tl.font = font; tl.fontSize = 11; tl.color = Color.white; tl.alignment = TextAnchor.MiddleCenter;
+                tl.rectTransform.sizeDelta = new Vector2(56, 20);
+                var tg = tgo.GetComponent<Toggle>(); tg.group = libUI.elementGroup; tg.isOn = (i == 0);
+                libUI.elementToggles[i] = tg;
+            }
 
             // ========== DECK VIEWER (shared, create first so refs work) ==========
             var deckPanel = NewPanel("DeckViewerPanel", canvas.transform, false);
