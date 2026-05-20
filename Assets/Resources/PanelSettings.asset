@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19101, guid: 04dfb71a56b6d48a980a3bf5c54519e6, type: 3}
+  m_Name: PanelSettings
+  m_EditorClassIdentifier: 
+  themeUss: {fileID: 0}
+  m_TargetDisplay: 0
+  m_SortingOrder: 0
+  m_ScaleMode: 1
+  m_ReferenceSpritePixelsPerUnit: 100
+  m_Scale: 1
+  m_ReferenceDpi: 96
+  m_FallbackDpi: 96
+  m_ReferenceWidth: 1920
+  m_ReferenceHeight: 1080
+  m_ScreenMatchMode: 1
+  m_Match: 0.5
+  m_SortingOrder: 0
