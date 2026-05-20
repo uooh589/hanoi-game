@@ -515,9 +515,9 @@ namespace HanoiGame
             go.GetComponent<RectTransform>().sizeDelta = new Vector2(w, h);
             go.GetComponent<RectTransform>().anchoredPosition = pos;
             var btnImg = go.GetComponent<Image>();
-            var spr = LoadUISprite(w < 120 ? "btn_small" : "btn_normal");
+            var spr = LoadUISprite(w < 120 ? "btn_modern_small" : "btn_modern_wide");
             if (spr != null) { btnImg.sprite = spr; btnImg.type = Image.Type.Sliced; btnImg.color = Color.white; }
-            else btnImg.color = new Color(0.4f, 0.28f, 0.1f, 0.95f);
+            else btnImg.color = new Color(0.3f, 0.22f, 0.1f, 0.95f);
 
             var txtGo = new GameObject("Text", typeof(Text));
             txtGo.transform.SetParent(go.transform, false);
