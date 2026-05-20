@@ -3,76 +3,28 @@
     "PreToolUse": [
       {
         "matcher": "Edit|Write.*\\.meta",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo 'BLOCKED: .meta files are Unity-managed. Do not edit them directly.' && exit 1"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash.*buildTarget Win64.*|Bash.*buildLinux64Player.*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo 'BUILD REMINDER: Run SceneBuilder.Build first if SceneBuilder.cs or UI layout was modified.'"
-          }
-        ]
+        "hooks": [{"type": "command", "command": "echo 'BLOCKED: .meta files are Unity-managed.' && exit 1"}]
       }
     ],
     "PostToolUse": [
       {
-        "matcher": "Edit.*SceneBuilder\\.cs",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo 'SCENEBUILDER CHANGED: Rebuild scene via -executeMethod HanoiGame.SceneBuilder.Build before next build'"
-          }
-        ]
+        "matcher": "Edit.*\\.cs",
+        "hooks": [{"type": "command", "command": "cd /home/liuhan/hanoi-game && grep -rn 'error CS' Library/ 2>/dev/null | head -3 || echo 'No compile errors found'"}]
       },
       {
-        "matcher": "Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cd /home/liuhan/hanoi-game && grep -rn 'error CS' Library/ 2>/dev/null | head -3 || true"
-          }
-        ]
+        "matcher": "Edit.*SceneBuilder\\.cs|Edit.*/UI/.*\\.cs",
+        "hooks": [{"type": "command", "command": "echo 'Scene/UI changed — rebuild scene before next build'"}]}
       }
     ]
   },
   "permissions": {
     "allow": [
-      "Bash(git:*)",
-      "Bash(gh:*)",
-      "Bash(npm:*)",
-      "Bash(curl:*)",
-      "Bash(yt-dlp:*)",
-      "Bash(rm:*)",
-      "Bash(mkdir:*)",
-      "Bash(cp:*)",
-      "Bash(mv:*)",
-      "Bash(ls:*)",
-      "Bash(find:*)",
-      "Bash(du:*)",
-      "Bash(stat:*)",
-      "Bash(grep:*)",
-      "Bash(cat:*)",
-      "Bash(chmod:*)",
-      "Bash(pkill:*)",
-      "Bash(python3:*)",
-      "Bash(zip:*)",
-      "Bash(tar:*)",
-      "Bash(echo:*)",
-      "Bash(wc:*)",
-      "Bash(which:*)",
-      "Bash(cd:*)",
-      "Bash(./publish.sh:*)",
-      "Bash(file:*)",
-      "Bash(host:*)",
-      "Bash(strings:*)",
-      "Bash(awk:*)",
-      "Bash(sed:*)"
+      "Bash(git:*)","Bash(gh:*)","Bash(curl:*)","Bash(yt-dlp:*)",
+      "Bash(rm:*)","Bash(mkdir:*)","Bash(cp:*)","Bash(mv:*)","Bash(ls:*)",
+      "Bash(find:*)","Bash(du:*)","Bash(stat:*)","Bash(grep:*)","Bash(cat:*)",
+      "Bash(chmod:*)","Bash(pkill:*)","Bash(python3:*)","Bash(zip:*)",
+      "Bash(tar:*)","Bash(echo:*)","Bash(wc:*)","Bash(which:*)","Bash(cd:*)",
+      "Bash(./publish.sh:*)","Bash(file:*)","Bash(strings:*)","Bash(awk:*)","Bash(sed:*)"
     ]
   }
 }

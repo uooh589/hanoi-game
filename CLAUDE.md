@@ -2,6 +2,14 @@
 
 Unity 2022.3.62f3c1 / C# / Roguelike 卡牌战斗游戏。
 
+## Vibe Coding Rules
+- **只改 Unity，不换引擎，不新建项目。**
+- **编辑 .cs 后立刻编译检查：** `grep "error CS" /tmp/*.log`
+- **编辑 SceneBuilder.cs 或 UI 布局后，必须先重建场景再构建。**
+- **批量数据用 Python 生成 C# 代码再注入（不要手写重复代码）。**
+- **每次改动后构建验证，不等用户催。**
+- **改按钮回调不要用 lambda（序列化丢失），用 Handler 模式。**
+
 ## Build
 
 ```bash

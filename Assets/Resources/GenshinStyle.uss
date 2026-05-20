@@ -1,0 +1,126 @@
+/* ── Genshin Impact UI Style ── */
+
+/* ── Root ── */
+.genshin-root {
+    flex-grow: 1;
+    background-color: rgb(20,15,25);
+}
+
+/* ── Glass base ── */
+.genshin-glass {
+    background-color: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    border-width: 1px;
+    border-color: rgba(229,194,142,0.15);
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+}
+
+/* ── Button ── */
+.genshin-button {
+    height: 44px;
+    padding-left: 24px;
+    padding-right: 24px;
+    border-radius: 8px;
+    background-color: rgba(229,194,142,0.12);
+    border-width: 1px;
+    border-color: rgba(229,194,142,0.3);
+    color: rgb(249,246,240);
+    font-size: 16px;
+    -unity-font-definition: resource("Fonts/NotoSansSC SDF");
+    justify-content: center;
+    align-items: center;
+    transition: translate 0.15s ease-out, background-color 0.15s ease-out, scale 0.1s ease-out;
+    overflow: hidden;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.genshin-button:hover {
+    background-color: rgba(229,194,142,0.25);
+    border-color: rgba(229,194,142,0.55);
+    translate: 0 -2px;
+}
+
+.genshin-button:active {
+    scale: 0.96;
+}
+
+.genshin-button-sm { height: 32px; font-size: 13px; padding-left: 16px; padding-right: 16px; }
+
+/* ── Shimmer ── */
+.genshin-shimmer {
+    position: absolute;
+    top: 0; left: -50%; width: 50%; bottom: 0;
+    background-color: rgba(255,255,255,0.15);
+    transition: left 0.6s ease-out;
+}
+
+@keyframes shimmer {
+    0% { left: -50%; }
+    50% { left: 100%; }
+    100% { left: -50%; }
+}
+
+/* ── Panel ── */
+.genshin-panel {
+    position: absolute;
+    left: 50%; top: 50%;
+    translate: -50% -50%;
+    width: 600px;
+    max-height: 700px;
+    border-radius: 16px;
+    border-width: 1px;
+    border-color: rgba(229,194,142,0.2);
+    background-color: rgba(20,15,25,0.85);
+    overflow: hidden;
+    transition: opacity 0.3s ease-out, translate 0.35s ease-out;
+}
+
+.genshin-panel-corners {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+}
+
+.genshin-corner-0 { position: absolute; top: 8px; left: 16px; width: 12px; height: 12px; background-color: rgba(229,194,142,0.4); rotate: 45deg; }
+.genshin-corner-1 { position: absolute; top: 8px; right: 16px; width: 12px; height: 12px; background-color: rgba(229,194,142,0.4); rotate: 45deg; }
+.genshin-corner-2 { position: absolute; bottom: 8px; left: 16px; width: 12px; height: 12px; background-color: rgba(229,194,142,0.4); rotate: 45deg; }
+.genshin-corner-3 { position: absolute; bottom: 8px; right: 16px; width: 12px; height: 12px; background-color: rgba(229,194,142,0.4); rotate: 45deg; }
+
+.genshin-panel-titlebar {
+    flex-direction: row; height: 48px; align-items: center; justify-content: space-between;
+    padding-left: 20px; padding-right: 12px;
+    border-bottom-width: 1px; border-bottom-color: rgba(229,194,142,0.15);
+}
+
+.genshin-panel-content { flex-grow: 1; padding: 20px; overflow: scroll; }
+
+.genshin-close-btn { font-size: 18px; background-color: transparent; border-width: 0; color: rgb(249,246,240); transition: color 0.15s; }
+.genshin-close-btn:hover { color: rgb(229,194,142); }
+
+/* ── Glow text ── */
+.genshin-glow-text { color: rgb(229,194,142); font-size: 20px; -unity-font-definition: resource("Fonts/NotoSansSC SDF"); }
+.genshin-title-lg { font-size: 28px; }
+.genshin-title-sm { font-size: 14px; }
+
+/* ── Health bar ── */
+.genshin-healthbar { height: 16px; flex-direction: row; border-radius: 4px; overflow: hidden; margin: 8px 0; }
+.genshin-healthbar-segment {
+    flex-grow: 1; height: 100%; margin-left: 2px; margin-right: 2px; border-radius: 2px;
+    transition: background-color 0.3s ease-out;
+}
+.genshin-healthbar-full { background-color: rgb(229,194,142); }
+.genshin-healthbar-partial { background-color: rgba(229,194,142,0.3); }
+.genshin-healthbar-empty { background-color: rgba(255,255,255,0.08); }
+
+/* ── Icon frame ── */
+.genshin-icon-frame {
+    width: 64px; height: 64px; rotate: 45deg; overflow: hidden;
+    border-width: 2px; border-color: rgba(229,194,142,0.3); border-radius: 6px;
+    background-color: rgba(20,15,25,0.8); align-items: center; justify-content: center;
+}
+.genshin-icon-frame-active { border-color: rgb(184,169,232); }
+.genshin-icon-inner { rotate: -45deg; width: 80%; height: 80%; }
+.genshin-icon-glow {
+    position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px;
+    background-color: rgba(184,169,232,0.2); border-radius: 8px; rotate: 45deg;
+}
